@@ -17,7 +17,7 @@ class _LectureListState extends State<LectureList> {
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
             appBar: AppBar(
               title: Text('NoteTakR'),
@@ -28,10 +28,12 @@ class _LectureListState extends State<LectureList> {
                 ),
                 Tab(text: 'Locations', icon: Icon(Icons.map)),
                 Tab(text: 'Graphs', icon: Icon(Icons.multiline_chart)),
+                Tab(text: 'Assignments',icon: Icon(Icons.note),),
               ]),
             ),
             body: TabBarView(
               children: <Widget>[
+
                 Tab(
                     child: GridView.count(
                         primary: true,
@@ -47,10 +49,85 @@ class _LectureListState extends State<LectureList> {
                 ),
                 Tab(
                   child: Text('Implements Graph Page'),
-                )
+                ),
+                Tab(
+                  child: Text("Implement Assignments"),
+                  )
+                
               ],
-            )));
-  }
+
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add_comment),
+              onPressed: () 
+              {
+                print("Add Lectures Page"); 
+                showDialog(
+                context: context,  
+                builder: (BuildContext context) {
+                 String new_lecture=""; 
+                 
+                 return new Dialog(
+                  
+                  backgroundColor: Colors.cyan,
+                  child: Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                        padding: const EdgeInsets.all(4),
+                        child:Text('Add A New Lecture',style:TextStyle(color: Colors.cyan,fontSize: 15))
+                        ),
+                        Padding(
+                        padding:  const EdgeInsets.all(4),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(), 
+                            hintText: 'Lecture Name',
+                          ),
+                          onChanged: (text) {
+                            new_lecture = text;
+                          },
+                        )
+                        ),
+                        ButtonBar(
+                          children: <Widget>[
+                            FlatButton(
+                              child: Text("Add"), 
+                              onPressed: () 
+                              {
+                                //TODO: ADD notes to database 
+                                _AddLecturetoDB(new_lecture); 
+                                 Navigator.pop(context);                               
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              child: Text("Cancel"), 
+                                                              onPressed: () 
+                                                              {
+                                                                  Navigator.pop(context); 
+                                                              },
+                                                            )
+                                                          ],
+                                                        )
+                                                      ],
+                                                    )
+                                                  )
+                                                );
+                                                }
+                                                );
+                                              
+                                              },
+                                            ),
+                                            )
+                                            
+                                            );
+                                  }
+                                
+                                  void _AddLecturetoDB(String new_lecture) {
+                                     print("Add Lecture $new_lecture to Database");
+
+                                  }
 }
 
 class LectureWidget extends StatelessWidget {
@@ -63,18 +140,22 @@ class LectureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: Implement build
-    return new Container(
-        decoration: BoxDecoration(color: Colors.grey),
-        child: GestureDetector(
-          onTap: () {
-            //TODO: Navigate to Notes Page
-            _navigatetoAddPage(this.context, this.title);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(0.5),
+    return new Card(
+      color: Colors.blueGrey,
+      child: InkWell(
+        splashColor: Colors.blue,
+        onTap: () {
+          print('Card tapped.');
+          _navigatetoAddPage(context, this.title);
+        },
+        child: Container(
+          width: 300,
+          height: 100,
+          
+          child: Center(
             child: Text(this.title),
           ),
-        ));
+        )));
   }
 
   void _navigatetoAddPage(context, String lecture) {
@@ -82,4 +163,6 @@ class LectureWidget extends StatelessWidget {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyNotesPage(lecture)));
   }
+
+  
 }

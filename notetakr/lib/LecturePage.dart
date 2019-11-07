@@ -66,6 +66,7 @@ class _LectureListState extends State<LectureList> {
                 context: context,  
                 builder: (BuildContext context) {
                  String new_lecture=""; 
+                 String new_code = "";
                  
                  return new Dialog(
                   
@@ -90,6 +91,19 @@ class _LectureListState extends State<LectureList> {
                           },
                         )
                         ),
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(), 
+                              hintText: 'Course Code'
+                            ),
+                            onChanged: (code)
+                            {
+                              new_code = code; 
+                            },
+                          ),
+                        ),
                         ButtonBar(
                           children: <Widget>[
                             FlatButton(
@@ -97,7 +111,7 @@ class _LectureListState extends State<LectureList> {
                               onPressed: () 
                               {
                                 //TODO: ADD notes to database 
-                                _AddLecturetoDB(new_lecture); 
+                                _AddLecturetoDB(new_lecture,new_code); 
                                  Navigator.pop(context);                               
                                                               },
                                                             ),
@@ -124,8 +138,9 @@ class _LectureListState extends State<LectureList> {
                                             );
                                   }
                                 
-                                  void _AddLecturetoDB(String new_lecture) {
-                                     print("Add Lecture $new_lecture to Database");
+                                  void _AddLecturetoDB(String new_lecture,String new_code) {
+                                     print("Add Lecture $new_lecture  and $new_code to  Database");
+                                     //TODO: Insert new Lecture to model 
 
                                   }
 }

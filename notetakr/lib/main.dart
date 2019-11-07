@@ -14,11 +14,11 @@ class NoteTakRApp extends StatelessWidget {
         title: 'NoteTakR',
         // SplashScreen while app is loading
         home: SplashScreen.navigate(
-          name: 'assets/intro.flr',
+          name: 'assets/NoteTakR.flr',
           next: (context) => LectureList(),
           until: () => Future.delayed(Duration(seconds: 3)),
           backgroundColor: Color(0xff03a94),
-          startAnimation: '1',
+          startAnimation: 'Erase', // Plays Erase animation
         ),
     );
   }

@@ -17,7 +17,6 @@ class NoteTakRApp extends StatelessWidget {
           name: 'assets/NoteTakR.flr',
           next: (context) => LectureList(),
           until: () => Future.delayed(Duration(seconds: 3)),
-          backgroundColor: Color(0xff03a94),
           startAnimation: 'Erase', // Plays Erase animation
         ),
     );

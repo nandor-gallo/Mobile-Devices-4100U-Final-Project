@@ -16,6 +16,7 @@ class _LectureListState extends State<LectureList> {
   ];
   DateTime _classDates = DateTime.now();
   var _notifications = Notifications();
+  int selected_tab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +44,9 @@ class _LectureListState extends State<LectureList> {
           body: TabBarView(
             children: <Widget>[
               Tab(
-                //Grid of Classes
+                  //Grid of Classes
                   child: GridView.count(
+
                       primary: true,
                       crossAxisCount: 4,
                       children: (lectures
@@ -59,14 +61,12 @@ class _LectureListState extends State<LectureList> {
               Tab(
                 child: Text('Implements Graph Page'),
               ),
-              Tab(
-                //List of Assignments
+              Tab(       
+                  //List of Assignments                  
                   child: ListView(
                       primary: true,
-
                       children: (lectures
-                          .map((lecture) =>
-                              new LectureWidget(this.context, lecture))
+                          .map((lecture) => new AssignmentWidget())
                           .toList()))
                   //TODO: Implement a Future Builder Widget to get Data For the Assignments
                   )
@@ -196,8 +196,9 @@ class _LectureListState extends State<LectureList> {
                                   child: Text("Add"),
                                   onPressed: () {
                                     //TODO: ADD notes to database
-                                    _AddLecturetoDB(new_lecture, new_code, _classDates);
-                                    //Send a notification 
+                                    _AddLecturetoDB(
+                                        new_lecture, new_code, _classDates);
+                                    //Send a notification
                                     _notificationLater(_classDates);
                                     Navigator.pop(context);
                                   },
@@ -217,14 +218,39 @@ class _LectureListState extends State<LectureList> {
           ),
         ));
   }
+
   Future<void> _notificationLater(var dateNotify) async {
     print(dateNotify);
-    await _notifications.sendNotificationLater('CSCI 4100 Assignment', 'Due: Thursday!', dateNotify, 'payload');
+    await _notifications.sendNotificationLater(
+        'CSCI 4100 Assignment', 'Due: Thursday!', dateNotify, 'payload');
   }
 
-  void _AddLecturetoDB(String new_lecture, String new_code,DateTime date) {
+  void _AddLecturetoDB(String new_lecture, String new_code, DateTime date) {
     print("Add Class $new_lecture  and $new_code to  Database With $date");
     //TODO: Insert new Lecture to model
+  }
+}
+
+class AssignmentWidget extends StatelessWidget {
+  String title;
+  DateTime dueDate;
+
+  BuildContext context;
+  AssignmentWidget({this.title, this.dueDate, this.context});
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text("Assignment 1 CSCI 2040"),
+      subtitle: Text("DUE: " + _toDateString(DateTime.now())),
+      leading: Icon(Icons.find_in_page),
+      //Implement a notification
+      //Implment swipe on completion
+      //Edit Due Date
+      onTap: (){
+        print("Hello");
+      },
+
+    );
   }
 }
 
@@ -237,7 +263,6 @@ class LectureWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    // TODO: Implement build
     return new Card(
         color: Colors.blueGrey,
         child: InkWell(
@@ -262,20 +287,18 @@ class LectureWidget extends StatelessWidget {
   }
 }
 
-
-
-
 String _twoDigits(int value) {
-    if (value < 10) {
-      return '0$value';
-    } else {
-      return '$value';
-    }
+  if (value < 10) {
+    return '0$value';
+  } else {
+    return '$value';
   }
+}
+
 String _toDateString(DateTime dateTime) {
   return '${dateTime.year}/${dateTime.month}/${dateTime.day}';
 }
-String _toTimeString(DateTime dateTime) {
-    return '${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
-  }
 
+String _toTimeString(DateTime dateTime) {
+  return '${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
+}

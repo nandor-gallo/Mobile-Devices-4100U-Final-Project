@@ -14,6 +14,8 @@ dependencies:
   #Our Dependencies: 
   flare_splash_screen: ^3.0.0
   flutter_local_notifications: ^0.8.4
+  sqflite:
+  path:
 
 dev_dependencies:
   flutter_test:

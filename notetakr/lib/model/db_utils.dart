@@ -10,11 +10,11 @@ class DBUtils {
       onCreate: (db, version) {
         if (version == 1) {
           db.execute(
-              'CREATE TABLE assignments(id INTEGER PRIMARY KEY, name TEXT, courseId TEXT, dueDate TEXT, dueAlert Text)');
+              'CREATE TABLE assignments(id INTEGER PRIMARY KEY, assignmentName TEXT, courseId TEXT, dueDate TEXT, dueAlert Text)');
           db.execute(
-              'CREATE TABLE note(id INTEGER PRIMARY KEY, name TEXT, dateCreated TEXT, dateEdited TEXT, noteData Text)');
+              'CREATE TABLE notes(id INTEGER PRIMARY KEY, noteName TEXT, dateCreated TEXT, dateEdited TEXT, noteData Text)');
           db.execute(
-              'CREATE TABLE lecture(id INTEGER PRIMARY KEY, name TEXT, courseId TEXT)');
+              'CREATE TABLE courses(id INTEGER PRIMARY KEY, courseName TEXT, courseId TEXT)');
         } else {}
       },
       version: 1,

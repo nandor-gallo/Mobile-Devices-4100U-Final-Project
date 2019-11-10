@@ -1,16 +1,16 @@
 class Assignment{
   
-  Assignment({this.id, this.name, this.courseId, this.dueDate, this.dueAlert});
+  Assignment({this.id, this.assignmentName, this.courseId, this.dueDate, this.dueAlert});
 
   int id;
-  String name;
+  String assignmentName;
   String courseId;
   String dueDate;
   String dueAlert;
 
   Assignment.fromMap(Map<String, dynamic> map){
     this.id = map['id'];
-    this.name = map['name'];
+    this.assignmentName = map['assignmentName'];
     this.courseId = map['courseId'];
     this.dueDate = map['dueDate'];
     this.dueDate = map['id'];
@@ -19,7 +19,7 @@ class Assignment{
   Map<String,dynamic> toMap(){
     return{
       'id': this.id,
-      'name': this.name,
+      'name': this.assignmentName,
       'courseId': this.courseId,
       'dueDate': this.dueDate,
       'dueAlert': this.dueAlert,
@@ -28,6 +28,6 @@ class Assignment{
 
   @override
   String toString() {
-    return 'Assignment(id: $id, name: $name, courseId: $courseId, dueDate: $dueDate, dueAlert: $dueAlert)';
+    return 'Assignment(id: $id, name: $assignmentName, courseId: $courseId, dueDate: $dueDate, dueAlert: $dueAlert)';
   }
 }

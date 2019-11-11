@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  #Our Dependencies: 
+  # Our Dependencies: 
   flare_splash_screen: ^3.0.0
   flutter_local_notifications: ^0.8.4
   sqflite:
@@ -25,6 +25,8 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: "^0.7.4"
 
+# If the launcher icon does not change run
+# flutter pub pub run flutter_launcher_icons:main
 flutter_icons:
   image_path: "assets/images/logo.png"
   android: "launcher_icon"
@@ -39,7 +41,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - NoteTakR.flr
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

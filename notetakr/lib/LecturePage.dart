@@ -17,6 +17,7 @@ class _LectureListState extends State<LectureList> {
   DateTime _classDates = DateTime.now();
   var _notifications = Notifications();
   int selected_tab = 0;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,7 @@ class _LectureListState extends State<LectureList> {
     return new DefaultTabController(
         length: 4,
         child: Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
             title: Text('NoteTakR'),
             bottom: TabBar(isScrollable: true, tabs: <Widget>[
@@ -46,7 +48,6 @@ class _LectureListState extends State<LectureList> {
               Tab(
                   //Grid of Classes
                   child: GridView.count(
-
                       primary: true,
                       crossAxisCount: 4,
                       children: (lectures
@@ -61,8 +62,8 @@ class _LectureListState extends State<LectureList> {
               Tab(
                 child: Text('Implements Graph Page'),
               ),
-              Tab(       
-                  //List of Assignments                  
+              Tab(
+                  //List of Assignments
                   child: ListView(
                       primary: true,
                       children: (lectures
@@ -82,7 +83,6 @@ class _LectureListState extends State<LectureList> {
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
-
                     return new Dialog(
                         backgroundColor: Colors.cyan,
                         child: Card(
@@ -200,6 +200,8 @@ class _LectureListState extends State<LectureList> {
                                         new_lecture, new_code, _classDates);
                                     //Send a notification
                                     _notificationLater(_classDates);
+                                    //Display Snack Bar
+                                    _displayClassAddBar(context);
                                     Navigator.pop(context);
                                   },
                                 ),
@@ -217,6 +219,15 @@ class _LectureListState extends State<LectureList> {
             },
           ),
         ));
+  }
+
+  _displayClassAddBar(BuildContext context) {
+    final snackBar = SnackBar(content: Text('New Class Added!'));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+  _displayAssignmentAddBar(BuildContext context) {
+    final snackBar = SnackBar(content: Text('New Assignment Added!'));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   Future<void> _notificationLater(var dateNotify) async {
@@ -246,10 +257,9 @@ class AssignmentWidget extends StatelessWidget {
       //Implement a notification
       //Implment swipe on completion
       //Edit Due Date
-      onTap: (){
+      onTap: () {
         print("Hello");
       },
-
     );
   }
 }

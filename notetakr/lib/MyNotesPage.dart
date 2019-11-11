@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'AddNote.dart';
 import 'MyNote.dart';
 
 class MyNotesPage extends StatefulWidget {
@@ -54,12 +55,18 @@ class MyNotesPageState extends State<MyNotesPage> {
         onPressed: () {
           //TODO: Make add Notes functionality
           print("Include Add Notes Functionality");
+          _navigatetoAddNotes(context,);
           Scaffold.of(this.context).showSnackBar(addSnackbar);
         },
         child: Icon(Icons.add),
       ),
     );
   }
+}
+
+void _navigatetoAddNotes(BuildContext context)
+{
+  Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote() ));
 }
 
 void _navigatetodescription(BuildContext context, String s) {

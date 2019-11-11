@@ -7,7 +7,7 @@ class Course{
   String courseCode;
 
   Course.fromMap(Map<String,dynamic> map){
-    this.id = map['map'];
+    this.id = map['id'];
     this.courseName = map['courseName'];
     this.courseName = map['courseCode'];
   }

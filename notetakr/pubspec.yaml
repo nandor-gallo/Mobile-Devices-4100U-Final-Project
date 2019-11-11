@@ -16,6 +16,9 @@ dependencies:
   flutter_local_notifications: ^0.8.4
   sqflite:
   path:
+  http: 
+  json_serializable: ^3.2.3
+
 
 dev_dependencies:
   flutter_test:

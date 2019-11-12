@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:sqflite/sql.dart';
-import 'db_utils.dart';
+import 'package:notetakr/utils/db_utils.dart';
 import 'note.dart';
 
 class NoteModel {

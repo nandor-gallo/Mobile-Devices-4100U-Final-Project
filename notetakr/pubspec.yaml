@@ -28,7 +28,7 @@ dev_dependencies:
 # If the launcher icon does not change run
 # flutter pub pub run flutter_launcher_icons:main
 flutter_icons:
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/pencil_launcher.png"
   android: "launcher_icon"
   ios: true  
 

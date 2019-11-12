@@ -272,6 +272,9 @@ class AssignmentWidget extends StatelessWidget {
   }
 }
 
+
+
+
 class LectureWidget extends StatelessWidget {
   String title;
   BuildContext context;

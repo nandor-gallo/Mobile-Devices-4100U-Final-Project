@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:notetakr/model/note.dart';
+import 'package:notetakr/model/note_model.dart';
+import 'package:path/path.dart';
 
 import 'AddNote.dart';
 import 'MyNote.dart';
+
+final _model = NoteModel(); 
+
 
 class MyNotesPage extends StatefulWidget {
   String title;
@@ -46,52 +52,87 @@ class MyNotesPageState extends State<MyNotesPage> {
         ],
       ),
       body: Container(
-        child: ListView(
-            padding: const EdgeInsets.all(3),
-            children:
-                notes.map((note) => new NoteWidget(context, note)).toList()),
+        child: FutureBuilder(
+          future: _getAllNotes(this.title),
+          builder: (context,snapshot) { 
+        if(snapshot.hasData)
+        {
+          List<Note> my_list = snapshot.data;
+          
+          
+        return ListView.builder(
+          itemCount: my_list.length,
+          itemBuilder: (_,int index) 
+          {
+            
+            print('in item builder len of data: ${snapshot.data.length}, index: $index'); 
+            print('in item builder: ${snapshot.data[index]}');
+            return new NoteWidget(context,my_list[index]); 
+          },
+        );
+        } 
+        else 
+        {
+          Text('No Notes have been added for this course'); 
+        }     
+          }
+      
+      )
+      
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //TODO: Make add Notes functionality
           print("Include Add Notes Functionality");
-          _navigatetoAddNotes(context,);
+          _navigatetoAddNotes(context,title);
           Scaffold.of(this.context).showSnackBar(addSnackbar);
         },
         child: Icon(Icons.add),
       ),
     );
   }
-}
 
-void _navigatetoAddNotes(BuildContext context)
+Future<List<Note>> _getAllNotes(String coursecode) async 
 {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote() ));
+  
+   var my_notes = await _model.getAllNotesforCourse(coursecode); 
+  
+  return my_notes; 
+
 }
 
-void _navigatetodescription(BuildContext context, String s) {
+
+}
+
+void _navigatetoAddNotes(BuildContext context,String course_code)
+{
+  Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote(course_code) ));
+}
+
+void _navigatetodescription(BuildContext context, Note s) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => MyNote(s)));
 }
 
 class NoteWidget extends StatelessWidget {
-  String note_name;
+  Note note;
   BuildContext context;
 
-  NoteWidget(BuildContext context, String note_name) {
+  NoteWidget(BuildContext context, Note note) {
     this.context = context;
-    this.note_name = note_name;
+    this.note = note;
   }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    print('Inside NoteWidget, ${note}'); 
     return new Card(
       child: InkWell(
         splashColor: Colors.cyan,
         onTap: () {
-          _navigatetodescription(context, note_name);
+          _navigatetodescription(context,note);
         },
         onLongPress: () {
-          _showDeleteDialog(context, note_name);
+          _showDeleteDialog(context, note);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,14 +140,14 @@ class NoteWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(4),
               child: Text(
-                note_name,
+                note.noteName, 
                 style: TextStyle(color: Colors.black, fontSize: 30),
               ),
             ),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: Text(
-                  'Date Created',
+                  note.dateCreated,
                   style: TextStyle(color: Colors.grey, fontSize: 14),
                 )),
           ],
@@ -115,7 +156,7 @@ class NoteWidget extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, String note_name) {
+  void _showDeleteDialog(BuildContext context, Note note_name) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -126,7 +167,7 @@ class NoteWidget extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(5),
-                  child: Text("Delete $note_name",
+                  child: Text("Delete ${note_name.noteName}",
                       style: TextStyle(color: Colors.cyan, fontSize: 24)),
                 ),
                 ButtonBar(
@@ -135,7 +176,7 @@ class NoteWidget extends StatelessWidget {
                       child: Text("OK",
                           style: TextStyle(color: Colors.cyan, fontSize: 18)),
                       onPressed: () {
-                        print('Implement Delete Note');
+                        //Todo" Create Delete Note 
                         Navigator.pop(context);
                       },
                     ),

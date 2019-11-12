@@ -7,7 +7,12 @@ import 'model/note.dart';
 class AddNote extends StatelessWidget{
   final _model = NoteModel();
 
+  String courseCode; 
 
+  AddNote(String courseCode)
+  {
+    this.courseCode = courseCode;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +63,8 @@ class AddNote extends StatelessWidget{
                   child:  Icon(Icons.check),
                   onPressed: () 
                   {
-                    _save_note_to_db(new Note(noteName:note_name,dateCreated: date,dateEdited: date,noteData: note_content)); 
+                    _save_note_to_db(new Note(noteName:note_name,courseCode: this.courseCode,   dateCreated: date,dateEdited: date,noteData: note_content)); 
+                    Navigator.pop(context);
                   },
                 ),
                 FloatingActionButton(

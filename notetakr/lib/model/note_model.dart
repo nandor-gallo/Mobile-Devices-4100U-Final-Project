@@ -33,4 +33,19 @@ class NoteModel {
     return notes;
   }
 
+  Future<List<Note>> getAllNotesforCourse(String course) async {
+    var db = await DBUtils.init();
+    final List<Map<String,dynamic>> maps = await db.query('notes');
+    List<Note> notes = [];
+    for (int i = 0; i < maps.length; i++) {
+      Note my_note = Note.fromMap(maps[i]);
+      if(my_note.courseCode!= course)
+      {
+        continue; 
+      }
+      notes.add(my_note);
+    }
+    return notes;
+  }
+
 }

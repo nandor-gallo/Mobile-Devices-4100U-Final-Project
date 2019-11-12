@@ -13,7 +13,7 @@ class Assignment{
     this.assignmentName = map['assignmentName'];
     this.courseId = map['courseId'];
     this.dueDate = map['dueDate'];
-    this.dueDate = map['id'];
+    this.dueAlert = map['dueAlert'];
   }
 
   Map<String,dynamic> toMap(){

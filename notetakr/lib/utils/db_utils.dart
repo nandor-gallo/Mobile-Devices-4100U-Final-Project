@@ -12,9 +12,9 @@ class DBUtils {
           db.execute(
               'CREATE TABLE assignments(id INTEGER PRIMARY KEY, assignmentName TEXT, courseId TEXT, dueDate TEXT, dueAlert Text)');
           db.execute(
-              'CREATE TABLE notes(id INTEGER PRIMARY KEY, noteName TEXT, dateCreated TEXT, dateEdited TEXT, noteData Text)');
+              'CREATE TABLE notes(id INTEGER PRIMARY KEY, noteName TEXT, dateCreated TEXT, dateEdited TEXT, courseCode TEXT, noteData Text)');
           db.execute(
-              'CREATE TABLE courses(id INTEGER PRIMARY KEY, courseName TEXT, courseId TEXT)');
+              'CREATE TABLE courses(id INTEGER PRIMARY KEY, courseName TEXT, courseId TEXT, courseTime TEXT, courseDays TEXT, courseDesc TEXT, courseType TEXT)');
         } else {}
       },
       version: 1,

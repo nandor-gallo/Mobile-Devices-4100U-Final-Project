@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/note_model.dart';
+import 'package:speech_recognition/speech_recognition.dart';
 
 import 'model/note.dart';
 
-class AddNote extends StatelessWidget{
+
+
+final _model = NoteModel();
+
+class AddNote extends StatefulWidget{
   final _model = NoteModel();
 
   String courseCode; 
@@ -15,6 +20,36 @@ class AddNote extends StatelessWidget{
   }
 
   @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return AddNoteState(this.courseCode);
+  }   
+  }
+
+
+  class AddNoteState extends State<AddNote> 
+  { 
+
+    bool _isListening = false;
+    bool _speechRecognitionAvailable = false; 
+    SpeechRecognition _speech; 
+    String courseCode; 
+    String  transcription= ""; 
+  
+    AddNoteState(String courseCode)
+    {
+      this.courseCode = courseCode; 
+    }
+
+
+     @override
+  initState() {
+    activateSpeechRecognizer(); 
+    super.initState();
+  }
+  
+    // TODO: implement build
+     @override
   Widget build(BuildContext context) {
     DateTime now = new DateTime.now();
     String date = new DateTime(now.year, now.month, now.day).toString();
@@ -72,7 +107,49 @@ class AddNote extends StatelessWidget{
                   child: Icon(Icons.mic),
                   onPressed: () 
                   {
-                    note_content += _getStringfromMic(); 
+                    _isListening = ! _isListening; 
+                    if(_isListening  && _speechRecognitionAvailable)
+                    {
+                      _speech.listen(locale: 'en_US').then((text) =>  print(text));
+                    }
+                    start(); 
+                    showDialog(
+                      context: context, 
+                      builder: (BuildContext context)
+                      { 
+                        return new Dialog(
+                          child: Container(
+                            height: 150,
+                            width: 150,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                              IconButton(
+                                icon:  Icon(Icons.cancel),
+                                iconSize: 40,
+                                color: Colors.cyan,
+                                onPressed: () 
+                                {
+                                  if(_isListening) 
+                                  {
+                                    _speech.stop().then(
+                                      (result) => setState(() => _isListening = false) 
+                                    );
+                                  }
+                                  _isListening = !_isListening;
+                                  
+                                  Navigator.pop(context);
+                                },
+                                
+
+                              )
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    );
+                    
                   },
                 )
               ],
@@ -83,18 +160,98 @@ class AddNote extends StatelessWidget{
       ),
 
     );
+  
 
-   
   }
 
-  String _getStringfromMic() 
-  {
-    return " ";
+  
+
+
+
+  
+
+
+  void start() => _speech
+      .listen(locale: 'en_US')
+      .then((result) => print('_MyAppState.start => result $result'));
+
+  void cancel() =>
+      _speech.cancel().then((result) => setState(() => _isListening = result));
+
+  void stop() => _speech.stop().then((result) {
+        setState(() => _isListening = result);
+      });
+
+  void onSpeechAvailability(bool result) =>
+      setState(() => _speechRecognitionAvailable = result);
+
+  void onCurrentLocale(String locale) {
+    print('_MyAppState.onCurrentLocale... $locale');
+    setState(
+        () =>  languages.firstWhere((l) => l.code == locale));
   }
+
+  void onRecognitionStarted() => setState(() => _isListening = true);
+
+  void onRecognitionResult(String text) => setState(() => transcription = text);
+
+  void onRecognitionComplete() => setState(() => _isListening = false);
+
+    void setAvailabilityHandler(void onSpeechAvailability(bool result)) => _speech.setAvailabilityHandler(onSpeechAvailability);
+
+
+  //void errorHandler() => activateSpeechRecognizer();
+
+    void activateSpeechRecognizer() {
+    print('_MyAppState.activateSpeechRecognizer... ');
+    _speech = new SpeechRecognition();
+    setAvailabilityHandler(onSpeechAvailability);
+    _speech.setCurrentLocaleHandler(onCurrentLocale);
+    _speech.setRecognitionStartedHandler(onRecognitionStarted);
+    _speech.setRecognitionResultHandler(onRecognitionResult);
+    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
+    _speech
+        .activate()
+        .then((res) => setState(() => _speechRecognitionAvailable = res));
+  }
+    
+  }
+
 
   Future<void> _save_note_to_db(Note note) async{
     print('Inserting new note'); 
     _model.insertNote(note);  
   }
 
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return null;
+  }
+
+
+  
+
+
+
+
+
+
+
+
+class Language {
+  final String name;
+  final String code;
+
+  const Language(this.name, this.code);
 }
+
+  const languages = const [
+  const Language('Francais', 'fr_FR'),
+  const Language('English', 'en_US'),
+  const Language('Pусский', 'ru_RU'),
+  const Language('Italiano', 'it_IT'),
+  const Language('Español', 'es_ES'),
+];
+
+ 

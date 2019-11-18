@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
 
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _LectureListState extends State<LectureList> {
     DateTime now = DateTime.now();
     //Tabs With Items
     return new DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
@@ -48,6 +49,7 @@ class _LectureListState extends State<LectureList> {
                 text: 'Assignments',
                 icon: Icon(Icons.note),
               ),
+              Tab(text:'Offered Courses', icon: Icon(Icons.pages),)
             ]),
           ),
           body: TabBarView(
@@ -67,7 +69,8 @@ class _LectureListState extends State<LectureList> {
                 child: Text('Implement Locations Widgets'),
               ),
               Tab(
-                child: myhttpWidget(), 
+
+                  child: AssignmentChartsPage() 
 
               ),
               Tab(
@@ -78,6 +81,9 @@ class _LectureListState extends State<LectureList> {
                           .map((lecture) => new AssignmentWidget())
                           .toList()))
                   //TODO: Implement a Future Builder Widget to get Data For the Assignments
+                  ),
+                  Tab(
+                     child: myhttpWidget(),
                   )
             ],
           ),

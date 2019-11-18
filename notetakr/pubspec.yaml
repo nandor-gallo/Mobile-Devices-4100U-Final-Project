@@ -18,7 +18,9 @@ dependencies:
   path:
   http: 
   json_serializable: ^3.2.3
-
+  speech_recognition: ^0.3.0
+  charts_flutter: ^0.8.1
+  data_tables: ^1.0.1
 
 dev_dependencies:
   flutter_test:

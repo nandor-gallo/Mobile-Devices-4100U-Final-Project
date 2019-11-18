@@ -23,6 +23,15 @@ class NoteModel {
     );   
   }
 
+  Future<int> deleteNote(Note note) async {
+    final db = await DBUtils.init();
+    return await db.delete(
+      'notes',
+      where: 'courseCode = ? ',
+      whereArgs: [note.courseCode],
+    );
+  }
+
   Future<List<Note>> getAllNotes() async {
     var db = await DBUtils.init();
     final List<Map<String,dynamic>> maps = await db.query('notes');

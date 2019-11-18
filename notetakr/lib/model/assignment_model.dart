@@ -4,7 +4,7 @@ import 'package:notetakr/utils/db_utils.dart';
 import 'assignment.dart';
 
 class AssignmentModel {
-  Future<void> insertCourse(Assignment assignment) async {
+  Future<void> insertAssignment(Assignment assignment) async {
     var db = await DBUtils.init();
     db.insert(
       'assignments',
@@ -13,17 +13,27 @@ class AssignmentModel {
     );
   }
 
-  Future<void> updateCourse(Assignment assignment) async {
+  Future<void> updateAssignment(Assignment assignment) async {
     var db = await DBUtils.init();
     db.update(
-      'courses', 
+      'assignments', 
       assignment.toMap(), 
       where: 'id = ?',
       whereArgs: [assignment.id],
     );   
   }
 
-  Future<List<Assignment>> getAllCourse() async {
+  Future<int> deleteAssignment(Assignment assignment) async{
+    var db = await DBUtils.init();
+
+    return await db.delete(
+      'assignments',
+      where: 'courseId = ?',
+      whereArgs: [assignment.courseId]
+    );
+  }
+
+  Future<List<Assignment>> getAllAssignment() async {
     var db = await DBUtils.init();
     final List<Map<String,dynamic>> maps = await db.query('assignments');
     List<Assignment> assignments = [];

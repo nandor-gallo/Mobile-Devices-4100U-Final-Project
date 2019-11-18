@@ -20,7 +20,7 @@ class Course {
   Course.fromMap(Map<String, dynamic> map) {
     this.id = map['id'];
     this.courseName = map['courseName'];
-    this.courseName = map['courseCode'];
+    this.courseCode = map['courseCode'];
     this.courseTime = map['courseTime'];
     this.courseDays = map['courseDays'];
     this.courseDesc = map['courseDesc'];

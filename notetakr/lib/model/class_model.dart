@@ -23,6 +23,17 @@ class CourseModel {
     );   
   }
 
+    Future<int> deleteCourse(Course course) async{
+    var db = await DBUtils.init();
+
+    return await db.delete(
+      'courses',
+      where: 'courseCode = ?',
+      whereArgs: [course.courseCode]
+    );
+  }
+
+
   Future<List<Course>> getAllCourse() async {
     var db = await DBUtils.init();
     final List<Map<String,dynamic>> maps = await db.query('courses');

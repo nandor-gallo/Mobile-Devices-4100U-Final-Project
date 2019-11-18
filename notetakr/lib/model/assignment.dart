@@ -19,7 +19,7 @@ class Assignment{
   Map<String,dynamic> toMap(){
     return{
       'id': this.id,
-      'name': this.assignmentName,
+      'assignmentName': this.assignmentName,
       'courseId': this.courseId,
       'dueDate': this.dueDate,
       'dueAlert': this.dueAlert,
@@ -28,6 +28,6 @@ class Assignment{
 
   @override
   String toString() {
-    return 'Assignment(id: $id, name: $assignmentName, courseId: $courseId, dueDate: $dueDate, dueAlert: $dueAlert)';
+    return 'Assignment(id: $id, assignmentName: $assignmentName, courseId: $courseId, dueDate: $dueDate, dueAlert: $dueAlert)';
   }
 }

@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
-
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/program.dart';
 import 'MyNotesPage.dart';
@@ -10,13 +10,15 @@ import 'model/program.dart';
 import 'utils/Notifications.dart';
 import 'package:http/http.dart' as http;
 
+String selectedAssigmentID = "0";
 
 class LectureList extends StatefulWidget {
   @override
   createState() => new _LectureListState();
 }
 
-class _LectureListState extends State<LectureList> with SingleTickerProviderStateMixin {
+class _LectureListState extends State<LectureList>
+    with SingleTickerProviderStateMixin {
   final List<String> lectures = [
     'CSCI 3100',
     'CSCI 4100',
@@ -24,6 +26,19 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
     ' Intro to Computer Science'
   ];
   TabController _tabController;
+
+  List<Widget> listAssignmentWidget(AsyncSnapshot snapshot) {
+    return snapshot.data.documents.map<Widget>((document) {
+      return ListTile(
+        title: Text(document["title"]),
+        subtitle: Text(_toTimeStampString(document["due"])),
+        onTap: () {
+          selectedAssigmentID = document.documentID;
+          print(selectedAssigmentID);
+        },
+      );
+    }).toList();
+  }
 
   @override
   void initState() {
@@ -46,21 +61,23 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text('NoteTakR'),
-
-            bottom: TabBar(isScrollable: true,controller: _tabController, tabs: <Widget>[
-              Tab(
-                text: 'Notes',
-                icon: Icon(Icons.list),
-              ),
-              Tab(text: 'Campus Map', icon: Icon(Icons.map)),
-              Tab(text: 'Graphs', icon: Icon(Icons.multiline_chart)),
-              Tab(
-                text: 'Assignments',
-                icon: Icon(Icons.note),
-              ),
-              Tab(text:'Offered Courses', icon: Icon(Icons.pages)),
-              Tab(text:'Daily Poll', icon: Icon(Icons.assessment)),
-            ]),
+            bottom: TabBar(
+                isScrollable: true,
+                controller: _tabController,
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Notes',
+                    icon: Icon(Icons.list),
+                  ),
+                  Tab(text: 'Campus Map', icon: Icon(Icons.map)),
+                  Tab(text: 'Graphs', icon: Icon(Icons.multiline_chart)),
+                  Tab(
+                    text: 'Assignments',
+                    icon: Icon(Icons.note),
+                  ),
+                  Tab(text: 'Offered Courses', icon: Icon(Icons.pages)),
+                  Tab(text: 'Daily Poll', icon: Icon(Icons.assessment)),
+                ]),
           ),
           body: TabBarView(
             controller: _tabController,
@@ -79,25 +96,30 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
               Tab(
                 child: Text('Implement Locations Widgets'),
               ),
+               Tab(
+
+                    child: Text("Assignment Charts Page")
+                    //AssignmentChartsPage()
+
+                   ),
               Tab(
-
-                  child: AssignmentChartsPage()
-
+                //List of Assignments
+                child: StreamBuilder(
+                    stream: Firestore.instance
+                        .collection("Assignments")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return ListView(
+                        children: listAssignmentWidget(snapshot),
+                      );
+                    }),
+                //TODO: Implement a Future Builder Widget to get Data For the Assignments
               ),
               Tab(
-                  //List of Assignments
-                  child: ListView(
-                      primary: true,
-                      children: (lectures
-                          .map((lecture) => new AssignmentWidget())
-                          .toList()))
-                  //TODO: Implement a Future Builder Widget to get Data For the Assignments
-                  ),
-                  Tab(
-                     child: myhttpWidget(),
-                  ),
+                child: myhttpWidget(),
+              ),
               Tab(
-                  child: TodaysPollsPage(),
+                child: TodaysPollsPage(),
               ),
             ],
           ),
@@ -112,260 +134,259 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
-                    if(_tabController.index==0){
+                    if (_tabController.index == 0) {
                       return new Dialog(
-                        backgroundColor: Colors.cyan,
-                        child: Card(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Text('Add A New Class',
-                                    style: TextStyle(
-                                        color: Colors.cyan, fontSize: 15))),
-                            Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Class Name',
-                                  ),
-                                  onChanged: (text) {
-                                    new_lecture = text;
-                                  },
-                                )),
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Course Code'),
-                                onChanged: (code) {
-                                  new_code = code;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  RaisedButton(
-                                    child: Text('Course Days'),
-                                    color: Colors.cyan,
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      showDatePicker(
-                                        context: context,
-                                        firstDate: now,
-                                        lastDate: DateTime(2100),
-                                        initialDate: now,
-                                      ).then((value) {
-                                        setState(() {
-                                          _classDates = DateTime(
-                                            value.year,
-                                            value.month,
-                                            value.day,
-                                            _classDates.hour,
-                                            _classDates.minute,
-                                            _classDates.second,
-                                          );
-                                        });
-                                      });
+                          backgroundColor: Colors.cyan,
+                          child: Card(
+                              child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Text('Add A New Class',
+                                      style: TextStyle(
+                                          color: Colors.cyan, fontSize: 15))),
+                              Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Class Name',
+                                    ),
+                                    onChanged: (text) {
+                                      new_lecture = text;
                                     },
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25.0),
-                                    child: Text(_toDateString(_classDates)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  RaisedButton(
-                                    child: Text('Course Time'),
-                                    color: Colors.cyan,
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay(
-                                          hour: now.hour,
-                                          minute: now.minute,
-                                        ),
-                                      ).then((value) {
-                                        setState(() {
-                                          _classDates = DateTime(
-                                            _classDates.year,
-                                            _classDates.month,
-                                            _classDates.day,
-                                            value.hour,
-                                            value.minute,
-                                          );
-                                        });
-                                      });
-                                    },
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25.0),
-                                    child: Text(_toTimeString(_classDates)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ButtonBar(
-                              children: <Widget>[
-                                FlatButton(
-                                  child: Text("Add"),
-                                  onPressed: () {
-                                    _AddLecturetoDB(
-                                        new_lecture, new_code, _classDates);
-                                    //Send a notification
-                                    _notificationLater(_classDates);
-                                    //Display Snack Bar
-                                    _displayClassAddBar(context);
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                FlatButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                )
-                              ],
-                            )
-                          ],
-                        )));
-                    }else if(_tabController.index == 3){
-                       return new Dialog(
-                        backgroundColor: Colors.cyan,
-                        child: Card(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Text('Add An Assignment',
-                                    style: TextStyle(
-                                        color: Colors.cyan, fontSize: 15))),
-                            Padding(
+                                  )),
+                              Padding(
                                 padding: const EdgeInsets.all(4),
                                 child: TextField(
                                   decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    hintText: 'Assignment Title',
-                                  ),
-                                  onChanged: (text) {
-                                    new_lecture = text;
-                                  },
-                                )),  
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  RaisedButton(
-                                    child: Text('Due Date'),
-                                    color: Colors.cyan,
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      showDatePicker(
-                                        context: context,
-                                        firstDate: now,
-                                        lastDate: DateTime(2100),
-                                        initialDate: now,
-                                      ).then((value) {
-                                        setState(() {
-                                          _classDates = DateTime(
-                                            value.year,
-                                            value.month,
-                                            value.day,
-                                            _classDates.hour,
-                                            _classDates.minute,
-                                            _classDates.second,
-                                          );
-                                        });
-                                      });
-                                    },
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25.0),
-                                    child: Text(_toDateString(_classDates)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  RaisedButton(
-                                    child: Text('Time Due'),
-                                    color: Colors.cyan,
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay(
-                                          hour: now.hour,
-                                          minute: now.minute,
-                                        ),
-                                      ).then((value) {
-                                        setState(() {
-                                          _classDates = DateTime(
-                                            _classDates.year,
-                                            _classDates.month,
-                                            _classDates.day,
-                                            value.hour,
-                                            value.minute,
-                                          );
-                                        });
-                                      });
-                                    },
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25.0),
-                                    child: Text(_toTimeString(_classDates)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ButtonBar(
-                              children: <Widget>[
-                                FlatButton(
-                                  child: Text("Add"),
-                                  onPressed: () {
-                                    
-                                    //Send a notification
-                                    //TODO Add Assignments
-                                    //_notificationLater(_classDates);
-                                    //Display Snack Bar
-                                    _displayAssignmentAddBar(context);
-                                    Navigator.pop(context);
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Course Code'),
+                                  onChanged: (code) {
+                                    new_code = code;
                                   },
                                 ),
-                                FlatButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                )
-                              ],
-                            )
-                          ],
-                        )));
-                    }                   
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    RaisedButton(
+                                      child: Text('Course Days'),
+                                      color: Colors.cyan,
+                                      textColor: Colors.black,
+                                      onPressed: () {
+                                        showDatePicker(
+                                          context: context,
+                                          firstDate: now,
+                                          lastDate: DateTime(2100),
+                                          initialDate: now,
+                                        ).then((value) {
+                                          setState(() {
+                                            _classDates = DateTime(
+                                              value.year,
+                                              value.month,
+                                              value.day,
+                                              _classDates.hour,
+                                              _classDates.minute,
+                                              _classDates.second,
+                                            );
+                                          });
+                                        });
+                                      },
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 25.0),
+                                      child: Text(_toDateString(_classDates)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    RaisedButton(
+                                      child: Text('Course Time'),
+                                      color: Colors.cyan,
+                                      textColor: Colors.black,
+                                      onPressed: () {
+                                        showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                            hour: now.hour,
+                                            minute: now.minute,
+                                          ),
+                                        ).then((value) {
+                                          setState(() {
+                                            _classDates = DateTime(
+                                              _classDates.year,
+                                              _classDates.month,
+                                              _classDates.day,
+                                              value.hour,
+                                              value.minute,
+                                            );
+                                          });
+                                        });
+                                      },
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 25.0),
+                                      child: Text(_toTimeString(_classDates)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ButtonBar(
+                                children: <Widget>[
+                                  FlatButton(
+                                    child: Text("Add"),
+                                    onPressed: () {
+                                      _AddLecturetoDB(
+                                          new_lecture, new_code, _classDates);
+                                      //Send a notification
+                                      _notificationLater(_classDates);
+                                      //Display Snack Bar
+                                      _displayClassAddBar(context);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              )
+                            ],
+                          )));
+                    } else if (_tabController.index == 3) {
+                      return new Dialog(
+                          backgroundColor: Colors.cyan,
+                          child: Card(
+                              child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Text('Add An Assignment',
+                                      style: TextStyle(
+                                          color: Colors.cyan, fontSize: 15))),
+                              Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Assignment Title',
+                                    ),
+                                    onChanged: (text) {
+                                      new_lecture = text;
+                                    },
+                                  )),
+                              Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    RaisedButton(
+                                      child: Text('Due Date'),
+                                      color: Colors.cyan,
+                                      textColor: Colors.black,
+                                      onPressed: () {
+                                        showDatePicker(
+                                          context: context,
+                                          firstDate: now,
+                                          lastDate: DateTime(2100),
+                                          initialDate: now,
+                                        ).then((value) {
+                                          setState(() {
+                                            _classDates = DateTime(
+                                              value.year,
+                                              value.month,
+                                              value.day,
+                                              _classDates.hour,
+                                              _classDates.minute,
+                                              _classDates.second,
+                                            );
+                                          });
+                                        });
+                                      },
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 25.0),
+                                      child: Text(_toDateString(_classDates)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    RaisedButton(
+                                      child: Text('Time Due'),
+                                      color: Colors.cyan,
+                                      textColor: Colors.black,
+                                      onPressed: () {
+                                        showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                            hour: now.hour,
+                                            minute: now.minute,
+                                          ),
+                                        ).then((value) {
+                                          setState(() {
+                                            _classDates = DateTime(
+                                              _classDates.year,
+                                              _classDates.month,
+                                              _classDates.day,
+                                              value.hour,
+                                              value.minute,
+                                            );
+                                          });
+                                        });
+                                      },
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 25.0),
+                                      child: Text(_toTimeString(_classDates)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ButtonBar(
+                                children: <Widget>[
+                                  FlatButton(
+                                    child: Text("Add"),
+                                    onPressed: () {
+                                      //Send a notification
+                                      //TODO Add Assignments
+                                      _notificationLater(_classDates);
+                                      //Display Snack Bar
+                                      _displayAssignmentAddBar(context);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              )
+                            ],
+                          )));
+                    }
                   });
             },
           ),
@@ -376,6 +397,7 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
     final snackBar = SnackBar(content: Text('New Class Added!'));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+
   _displayAssignmentAddBar(BuildContext context) {
     final snackBar = SnackBar(content: Text('New Assignment Added!'));
     _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -414,9 +436,10 @@ class AssignmentWidget extends StatelessWidget {
     );
   }
 }
-
-
-
+// Future<void> _completedAssignment() async {
+//     print(selectedItem);
+//     _model.deleteGrade(selectedItem);
+//   }
 
 class LectureWidget extends StatelessWidget {
   String title;
@@ -463,66 +486,55 @@ String _toDateString(DateTime dateTime) {
   return '${dateTime.year}/${dateTime.month}/${dateTime.day}';
 }
 
+String _toTimeStampString(Timestamp dateTime) {
+  return dateTime.toString();
+}
+
 String _toTimeString(DateTime dateTime) {
   return '${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
 }
 
-
-class myhttpWidget extends StatefulWidget
-{
+class myhttpWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return myhttpWidgetState();
   }
-
 }
 
-class myhttpWidgetState extends State<myhttpWidget>
-{
+class myhttpWidgetState extends State<myhttpWidget> {
   final String url = "https://ontariotechu.ca/programs/index.json";
-
-
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return FutureBuilder(
-      future:  getEvents(url),
-      builder: (context,snapshot)
-      {
-        if(snapshot.hasData)
-        {
-          List<ProgramElement> classes = snapshot.data.programs.program;
-          classes.forEach((f) => print(f.title));
-          return ListView(children: classes.map((item ) => new ProgramWidget(item)).toList());
-        }
-        else
-        {
-          return CircularProgressIndicator();
-        }
-      }
-    );
+        future: getEvents(url),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<ProgramElement> classes = snapshot.data.programs.program;
+            classes.forEach((f) => print(f.title));
+            return ListView(
+                children:
+                    classes.map((item) => new ProgramWidget(item)).toList());
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 
-  Future<Program> getEvents(String url)  async
-  {
+  Future<Program> getEvents(String url) async {
     var response = await http.get(url);
 
     return programFromJson(response.body);
     //TODO: Create an event class and  Return List of JSON
-
   }
-
-
 }
 
-class ProgramWidget extends StatelessWidget
-{
+class ProgramWidget extends StatelessWidget {
   prefix0.ProgramElement element;
 
-  ProgramWidget(ProgramElement element)
-  {
+  ProgramWidget(ProgramElement element) {
     this.element = element;
   }
 
@@ -530,20 +542,25 @@ class ProgramWidget extends StatelessWidget
   Widget build(BuildContext context) {
     // TODO: implement build
     return new GestureDetector(
-      onTap: ()
-      {}
-      ,
+      onTap: () {},
       child: Card(
-
         child: Column(
           children: <Widget>[
-            Text(this.element.title,style: TextStyle(color: Colors.cyan,fontSize:16),),
-            Text(this.element.summary,style: TextStyle(color:Colors.grey,fontSize: 12),),
-            Text('${this.element.faculty}',style: TextStyle(color: Colors.grey, fontSize: 10),),
+            Text(
+              this.element.title,
+              style: TextStyle(color: Colors.cyan, fontSize: 16),
+            ),
+            Text(
+              this.element.summary,
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            Text(
+              '${this.element.faculty}',
+              style: TextStyle(color: Colors.grey, fontSize: 10),
+            ),
           ],
         ),
       ),
     );
   }
-
 }

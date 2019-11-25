@@ -28,7 +28,7 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 5);
+    _tabController = TabController(vsync: this, length: 6);
   }
 
   DateTime _classDates = DateTime.now();
@@ -112,8 +112,8 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
-
-                    return new Dialog(
+                    if(_tabController.index==0){
+                      return new Dialog(
                         backgroundColor: Colors.cyan,
                         child: Card(
                             child: Column(
@@ -244,6 +244,128 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                             )
                           ],
                         )));
+                    }else if(_tabController.index == 3){
+                       return new Dialog(
+                        backgroundColor: Colors.cyan,
+                        child: Card(
+                            child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Text('Add An Assignment',
+                                    style: TextStyle(
+                                        color: Colors.cyan, fontSize: 15))),
+                            Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    hintText: 'Assignment Title',
+                                  ),
+                                  onChanged: (text) {
+                                    new_lecture = text;
+                                  },
+                                )),  
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  RaisedButton(
+                                    child: Text('Due Date'),
+                                    color: Colors.cyan,
+                                    textColor: Colors.black,
+                                    onPressed: () {
+                                      showDatePicker(
+                                        context: context,
+                                        firstDate: now,
+                                        lastDate: DateTime(2100),
+                                        initialDate: now,
+                                      ).then((value) {
+                                        setState(() {
+                                          _classDates = DateTime(
+                                            value.year,
+                                            value.month,
+                                            value.day,
+                                            _classDates.hour,
+                                            _classDates.minute,
+                                            _classDates.second,
+                                          );
+                                        });
+                                      });
+                                    },
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25.0),
+                                    child: Text(_toDateString(_classDates)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  RaisedButton(
+                                    child: Text('Time Due'),
+                                    color: Colors.cyan,
+                                    textColor: Colors.black,
+                                    onPressed: () {
+                                      showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay(
+                                          hour: now.hour,
+                                          minute: now.minute,
+                                        ),
+                                      ).then((value) {
+                                        setState(() {
+                                          _classDates = DateTime(
+                                            _classDates.year,
+                                            _classDates.month,
+                                            _classDates.day,
+                                            value.hour,
+                                            value.minute,
+                                          );
+                                        });
+                                      });
+                                    },
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25.0),
+                                    child: Text(_toTimeString(_classDates)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ButtonBar(
+                              children: <Widget>[
+                                FlatButton(
+                                  child: Text("Add"),
+                                  onPressed: () {
+                                    
+                                    //Send a notification
+                                    //TODO Add Assignments
+                                    //_notificationLater(_classDates);
+                                    //Display Snack Bar
+                                    _displayAssignmentAddBar(context);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                )
+                              ],
+                            )
+                          ],
+                        )));
+                    }                   
                   });
             },
           ),

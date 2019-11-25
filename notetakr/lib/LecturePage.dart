@@ -27,14 +27,9 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(vsync: this, length: 5);
   }
-  int _tabIndex = 0;
 
-  void _toggleTab() {
-    _tabIndex = _tabController.index + 1;
-    _tabController.animateTo(_tabIndex);
-  }
   DateTime _classDates = DateTime.now();
   var _notifications = Notifications();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -50,7 +45,7 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text('NoteTakR'),
-            
+
             bottom: TabBar(isScrollable: true,controller: _tabController, tabs: <Widget>[
               Tab(
                 text: 'Notes',
@@ -84,7 +79,7 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
               ),
               Tab(
 
-                  child: AssignmentChartsPage() 
+                  child: AssignmentChartsPage()
 
               ),
               Tab(
@@ -106,11 +101,13 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
             onPressed: () {
               //Create a selected index, to change between pages, Different From adding assignments, to adding classes...
               print("Add Lectures Page");
+              print(_tabController.index);
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
+
                     return new Dialog(
                         backgroundColor: Colors.cyan,
                         child: Card(
@@ -223,7 +220,6 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                                 FlatButton(
                                   child: Text("Add"),
                                   onPressed: () {
-                                    //TODO: ADD notes to database
                                     _AddLecturetoDB(
                                         new_lecture, new_code, _classDates);
                                     //Send a notification
@@ -345,17 +341,17 @@ String _toTimeString(DateTime dateTime) {
 }
 
 
-class myhttpWidget extends StatefulWidget 
+class myhttpWidget extends StatefulWidget
 {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return myhttpWidgetState();
   }
-  
+
 }
 
-class myhttpWidgetState extends State<myhttpWidget> 
+class myhttpWidgetState extends State<myhttpWidget>
 {
   final String url = "https://ontariotechu.ca/programs/index.json";
 
@@ -365,49 +361,49 @@ class myhttpWidgetState extends State<myhttpWidget>
   Widget build(BuildContext context) {
     // TODO: implement build
     return FutureBuilder(
-      future:  getEvents(url), 
-      builder: (context,snapshot) 
+      future:  getEvents(url),
+      builder: (context,snapshot)
       {
         if(snapshot.hasData)
         {
-          List<ProgramElement> classes = snapshot.data.programs.program; 
-          classes.forEach((f) => print(f.title)); 
+          List<ProgramElement> classes = snapshot.data.programs.program;
+          classes.forEach((f) => print(f.title));
           return ListView(children: classes.map((item ) => new ProgramWidget(item)).toList());
         }
-        else 
+        else
         {
-          return CircularProgressIndicator(); 
+          return CircularProgressIndicator();
         }
       }
-    ); 
-  } 
+    );
+  }
 
   Future<Program> getEvents(String url)  async
   {
     var response = await http.get(url);
 
-    return programFromJson(response.body); 
-    //TODO: Create an event class and  Return List of JSON 
+    return programFromJson(response.body);
+    //TODO: Create an event class and  Return List of JSON
 
-  } 
-  
-  
+  }
+
+
 }
 
-class ProgramWidget extends StatelessWidget 
+class ProgramWidget extends StatelessWidget
 {
-  prefix0.ProgramElement element; 
+  prefix0.ProgramElement element;
 
   ProgramWidget(ProgramElement element)
   {
-    this.element = element; 
+    this.element = element;
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return new GestureDetector(
-      onTap: () 
+      onTap: ()
       {}
       ,
       child: Card(
@@ -424,4 +420,3 @@ class ProgramWidget extends StatelessWidget
   }
 
 }
-

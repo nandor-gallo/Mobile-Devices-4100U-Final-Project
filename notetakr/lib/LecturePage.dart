@@ -15,16 +15,28 @@ class LectureList extends StatefulWidget {
   createState() => new _LectureListState();
 }
 
-class _LectureListState extends State<LectureList> {
+class _LectureListState extends State<LectureList> with SingleTickerProviderStateMixin {
   final List<String> lectures = [
     'CSCI 3100',
     'CSCI 4100',
     'CSCI 4500',
     ' Intro to Computer Science'
   ];
+  TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 3);
+  }
+  int _tabIndex = 0;
+
+  void _toggleTab() {
+    _tabIndex = _tabController.index + 1;
+    _tabController.animateTo(_tabIndex);
+  }
   DateTime _classDates = DateTime.now();
   var _notifications = Notifications();
-  int selected_tab = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -38,7 +50,8 @@ class _LectureListState extends State<LectureList> {
           key: _scaffoldKey,
           appBar: AppBar(
             title: Text('NoteTakR'),
-            bottom: TabBar(isScrollable: true, tabs: <Widget>[
+            
+            bottom: TabBar(isScrollable: true,controller: _tabController, tabs: <Widget>[
               Tab(
                 text: 'Notes',
                 icon: Icon(Icons.list),
@@ -53,6 +66,7 @@ class _LectureListState extends State<LectureList> {
             ]),
           ),
           body: TabBarView(
+            controller: _tabController,
             children: <Widget>[
               Tab(
                   //Grid of Classes

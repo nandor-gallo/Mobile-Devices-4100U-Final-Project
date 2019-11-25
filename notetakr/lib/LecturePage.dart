@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:notetakr/AssignmentsChartPage.dart';
+import 'package:notetakr/TodaysPolls.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
 
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
     DateTime now = DateTime.now();
     //Tabs With Items
     return new DefaultTabController(
-        length: 5,
+        length: 6,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
@@ -51,13 +52,14 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                 text: 'Notes',
                 icon: Icon(Icons.list),
               ),
-              Tab(text: 'Locations', icon: Icon(Icons.map)),
+              Tab(text: 'Campus Map', icon: Icon(Icons.map)),
               Tab(text: 'Graphs', icon: Icon(Icons.multiline_chart)),
               Tab(
                 text: 'Assignments',
                 icon: Icon(Icons.note),
               ),
-              Tab(text:'Offered Courses', icon: Icon(Icons.pages),)
+              Tab(text:'Offered Courses', icon: Icon(Icons.pages)),
+              Tab(text:'Daily Poll', icon: Icon(Icons.assessment)),
             ]),
           ),
           body: TabBarView(
@@ -93,7 +95,10 @@ class _LectureListState extends State<LectureList> with SingleTickerProviderStat
                   ),
                   Tab(
                      child: myhttpWidget(),
-                  )
+                  ),
+              Tab(
+                  child: TodaysPollsPage(),
+              ),
             ],
           ),
           floatingActionButton: FloatingActionButton(

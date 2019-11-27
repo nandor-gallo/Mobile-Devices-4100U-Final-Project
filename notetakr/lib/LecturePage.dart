@@ -13,6 +13,7 @@ import 'MyNotesPage.dart';
 import 'model/program.dart';
 import 'utils/Notifications.dart';
 import 'package:http/http.dart' as http;
+import 'model/assignment_model.dart';
 
 String selectedAssigmentID = "0";
 
@@ -23,7 +24,10 @@ class LectureList extends StatefulWidget {
 
 class _LectureListState extends State<LectureList>
  
-  with SingleTickerProviderStateMixin {
+ 
+    with SingleTickerProviderStateMixin {
+final _model = AssignmentModel();
+
   final List<String> lectures = [
     'CSCI 3100',
     'CSCI 4100',
@@ -31,8 +35,7 @@ class _LectureListState extends State<LectureList>
     ' Intro to Computer Science'
   ];
 
-   final _model = AssignmentModel();
-  final _lec_model = CourseModel();
+final _lec_model = CourseModel();
   TabController _tabController;
 
   List<Widget> listAssignmentWidget(AsyncSnapshot snapshot) {
@@ -40,9 +43,11 @@ class _LectureListState extends State<LectureList>
       return ListTile(
         title: Text(document["title"]),
         subtitle: Text(_toTimeStampString(document["due"])),
+        leading: Icon(Icons.assignment),
         onTap: () {
           selectedAssigmentID = document.documentID;
           print(selectedAssigmentID);
+          completedDialog(context);
         },
       );
     }).toList();
@@ -61,6 +66,7 @@ class _LectureListState extends State<LectureList>
   @override
   Widget build(BuildContext context) {
     _notifications.init();
+    String newAssignment = "";
     DateTime now = DateTime.now();
     //Tabs With Items
     return new DefaultTabController(
@@ -305,7 +311,8 @@ class _LectureListState extends State<LectureList>
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 25.0),
-                                      child: Text(_toDateString(_classDates)),
+                                      child:
+                                          new Text(_toDateString(_classDates)),
                                     ),
                                   ],
                                 ),
@@ -435,6 +442,41 @@ class _LectureListState extends State<LectureList>
         ));
   }
 
+  void completedDialog(BuildContext context) {
+    var completed = Dialog(
+        backgroundColor: Colors.cyan,
+        child: Card(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.all(4),
+                child: Text('Finished Assignment?',
+                    style: TextStyle(color: Colors.cyan, fontSize: 15))),
+            ButtonBar(
+              children: <Widget>[
+                FlatButton(
+                  child: Text("Completed"),
+                  onPressed: () {
+                    _completedAssignment(selectedAssigmentID);
+                    _displayAssignmentAddBar(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            )
+          ],
+        )));
+    showDialog(context: context, builder: (BuildContext context) => completed);
+  }
+
   _displayClassAddBar(BuildContext context) {
     final snackBar = SnackBar(content: Text('New Class Added!'));
     _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -446,9 +488,20 @@ class _LectureListState extends State<LectureList>
   }
 
   Future<void> _notificationLater(var dateNotify) async {
-    print(dateNotify);
     await _notifications.sendNotificationLater(
         'CSCI 4100 Assignment', 'Due: Thursday!', dateNotify, 'payload');
+  }
+
+  Future<void> _addAssignment(String title, DateTime d) async {
+    Timestamp time = Timestamp.fromDate(d);
+    _model.insertAssigmentFire(
+        Firestore.instance.collection("Assignments").document().documentID,
+        title,
+        time);
+  }
+
+  Future<void> _completedAssignment(String id) async {
+    _model.completedAssignment(id);
   }
 
   void _AddLecturetoDB(String new_lecture, String new_code, DateTime date) {
@@ -462,27 +515,6 @@ class _LectureListState extends State<LectureList>
   }
 }
 
-class AssignmentWidget extends StatelessWidget {
-  String title;
-  DateTime dueDate;
-
-  BuildContext context;
-  AssignmentWidget({this.title, this.dueDate, this.context});
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text("Assignment 1 CSCI 2040"),
-      subtitle: Text("DUE: " + _toDateString(DateTime.now())),
-      leading: Icon(Icons.find_in_page),
-      //Implement a notification
-      //Implment swipe on completion
-      //Edit Due Date
-      onTap: () {
-        print("Hello");
-      },
-    );
-  }
-}
 // Future<void> _completedAssignment() async {
 //     print(selectedItem);
 //     _model.deleteGrade(selectedItem);
@@ -533,8 +565,8 @@ String _toDateString(DateTime dateTime) {
   return '${dateTime.year}/${dateTime.month}/${dateTime.day}';
 }
 
-String _toTimeStampString(Timestamp dateTime) {
-  return dateTime.toString();
+String _toTimeStampString(Timestamp time) {
+  return "DUE: " + _toDateString(time.toDate());
 }
 
 String _toTimeString(DateTime dateTime) {

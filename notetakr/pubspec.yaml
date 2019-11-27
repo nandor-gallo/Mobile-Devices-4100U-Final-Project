@@ -11,7 +11,9 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  # Our Dependencies: 
+  # Our Dependencies:
+  flutter_localizations:
+    sdk: flutter 
   flare_splash_screen: ^3.0.0
   flutter_local_notifications: ^0.8.4
   sqflite:
@@ -22,6 +24,7 @@ dependencies:
   charts_flutter: ^0.8.1
   data_tables: ^1.0.1
   cloud_firestore:
+  
   flutter_map: 
 
 dev_dependencies:
@@ -42,4 +45,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - lang/en.json
+    - lang/fr.json
     - assets/
+    

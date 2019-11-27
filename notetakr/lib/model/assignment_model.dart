@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'assignment.dart';
 
 class AssignmentModel {
+  //FireStore Functions
   void insertAssigmentFire(String id, String title, Timestamp dueDate) async {
     await Firestore.instance
         .collection("Assignments")

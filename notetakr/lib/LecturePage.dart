@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
 import 'package:notetakr/map.dart' as prefix1;

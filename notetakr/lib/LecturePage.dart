@@ -2,6 +2,10 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
+import 'package:notetakr/map.dart' as prefix1;
+import 'package:notetakr/model/assignment.dart';
+import 'package:notetakr/model/assignment_model.dart';
+import 'package:notetakr/model/class_model.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/program.dart';
@@ -18,13 +22,17 @@ class LectureList extends StatefulWidget {
 }
 
 class _LectureListState extends State<LectureList>
-    with SingleTickerProviderStateMixin {
+ 
+  with SingleTickerProviderStateMixin {
   final List<String> lectures = [
     'CSCI 3100',
     'CSCI 4100',
     'CSCI 4500',
     ' Intro to Computer Science'
   ];
+
+   final _model = AssignmentModel();
+  final _lec_model = CourseModel();
   TabController _tabController;
 
   List<Widget> listAssignmentWidget(AsyncSnapshot snapshot) {
@@ -43,7 +51,7 @@ class _LectureListState extends State<LectureList>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 6);
+    _tabController = TabController(vsync: this, length: 2);
   }
 
   DateTime _classDates = DateTime.now();
@@ -56,7 +64,7 @@ class _LectureListState extends State<LectureList>
     DateTime now = DateTime.now();
     //Tabs With Items
     return new DefaultTabController(
-        length: 6,
+        length: 2,
         child: Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
@@ -69,14 +77,9 @@ class _LectureListState extends State<LectureList>
                     text: 'Notes',
                     icon: Icon(Icons.list),
                   ),
-                  Tab(text: 'Campus Map', icon: Icon(Icons.map)),
-                  Tab(text: 'Graphs', icon: Icon(Icons.multiline_chart)),
-                  Tab(
-                    text: 'Assignments',
-                    icon: Icon(Icons.note),
-                  ),
-                  Tab(text: 'Offered Courses', icon: Icon(Icons.pages)),
-                  Tab(text: 'Daily Poll', icon: Icon(Icons.assessment)),
+                  Tab(text: 'Assignments', icon: Icon(Icons.note)),
+                  
+                  
                 ]),
           ),
           body: TabBarView(
@@ -93,34 +96,11 @@ class _LectureListState extends State<LectureList>
                           .toList()))
                   //TODO: Implement a Future Builder Widget to get Data For the Notes
                   ),
-              Tab(
-                child: Text('Implement Locations Widgets'),
-              ),
+              
                Tab(
-
-                    child: Text("Assignment Charts Page")
-                    //AssignmentChartsPage()
+                  child: AssignmentChartsPage()
 
                    ),
-              Tab(
-                //List of Assignments
-                child: StreamBuilder(
-                    stream: Firestore.instance
-                        .collection("Assignments")
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      return ListView(
-                        children: listAssignmentWidget(snapshot),
-                      );
-                    }),
-                //TODO: Implement a Future Builder Widget to get Data For the Assignments
-              ),
-              Tab(
-                child: myhttpWidget(),
-              ),
-              Tab(
-                child: TodaysPollsPage(),
-              ),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -134,6 +114,9 @@ class _LectureListState extends State<LectureList>
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
+                    String new_assignmnet ="";
+                    String due_date = " ";
+                    String due_time = "";
                     if (_tabController.index == 0) {
                       return new Dialog(
                           backgroundColor: Colors.cyan,
@@ -266,8 +249,9 @@ class _LectureListState extends State<LectureList>
                               )
                             ],
                           )));
-                    } else if (_tabController.index == 3) {
+                    } else if (_tabController.index != 0) {
                       return new Dialog(
+                          //Dialog for adding assignmment
                           backgroundColor: Colors.cyan,
                           child: Card(
                               child: Column(
@@ -286,7 +270,7 @@ class _LectureListState extends State<LectureList>
                                       hintText: 'Assignment Title',
                                     ),
                                     onChanged: (text) {
-                                      new_lecture = text;
+                                      new_assignmnet = text;
                                     },
                                   )),
                               Padding(
@@ -370,8 +354,9 @@ class _LectureListState extends State<LectureList>
                                     onPressed: () {
                                       //Send a notification
                                       //TODO Add Assignments
+                                      Assignment current_assignmet = new Assignment(assignmentName: new_assignmnet,courseId: 'CSCI 3030',dueAlert:"4:50",dueDate: "27/09/2018");
                                       _notificationLater(_classDates);
-                                      //Display Snack Bar
+                                      _Add_assignment(current_assignmet);
                                       _displayAssignmentAddBar(context);
                                       Navigator.pop(context);
                                     },
@@ -389,6 +374,63 @@ class _LectureListState extends State<LectureList>
                     }
                   });
             },
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.all(0.6),
+              children: <Widget>[
+                DrawerHeader(
+                  child: Row(
+                    children: <Widget>[
+                      //@Dan Could you add the logo png here
+
+                      Text("NoteTakR")
+                    ],
+                  ),
+                
+                ),
+                ListTile(
+                  leading: Icon(Icons.map),
+                  title: Text("Campus Map"),
+                  onTap: ()
+                  {
+                    print("Navigate to Maps Page");
+                    Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => prefix1.Map()));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.pages),
+                  title: Text("Offered Courses"),
+                  onTap: ()
+                  {
+                    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => myhttpWidget()));
+                  },
+
+
+                ),
+                ListTile(
+                  leading: Icon(Icons.assessment),
+                  title: Text("Today's Poll"),
+                  onTap: () 
+                  {
+                       Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodaysPollsPage()));
+                  }
+                ),
+
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text("Settings"),
+                  onTap: ()
+                  {
+                    Navigator.pop(context);
+                  },
+                ),
+
+              ],
+            )
           ),
         ));
   }
@@ -412,6 +454,11 @@ class _LectureListState extends State<LectureList>
   void _AddLecturetoDB(String new_lecture, String new_code, DateTime date) {
     print("Add Class $new_lecture  and $new_code to  Database With $date");
     //TODO: Insert new Lecture to model
+  }
+
+  void _Add_assignment(Assignment assignment)
+  {
+    _model.insertAssignment(assignment);
   }
 }
 
@@ -451,7 +498,7 @@ class LectureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Card(
-        color: Colors.blueGrey,
+        color: Colors.blueAccent,
         child: InkWell(
             splashColor: Colors.blue,
             onTap: () {
@@ -508,7 +555,14 @@ class myhttpWidgetState extends State<myhttpWidget> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return FutureBuilder(
+    return 
+    Scaffold(
+    appBar: new AppBar(
+      title: Text("Ontario Tech U courses", style: TextStyle(fontStyle: FontStyle.italic),),
+
+    ),
+    
+    body:FutureBuilder(
         future: getEvents(url),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -520,7 +574,8 @@ class myhttpWidgetState extends State<myhttpWidget> {
           } else {
             return CircularProgressIndicator();
           }
-        });
+        })
+    );
   }
 
   Future<Program> getEvents(String url) async {

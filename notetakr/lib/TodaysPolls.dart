@@ -37,7 +37,7 @@ class TodaysPollsState extends State<TodaysPollsPage> {
           backgroundColor: Colors.orange,
           title: Text(
             "Which prof would you say is your favourite?",
-            textScaleFactor: 0.9,
+            textScaleFactor: 0.75,
           )),
       body: _buildBody(context),
     );

@@ -1,6 +1,9 @@
 cloud_firestore=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.12.10+2/
 firebase_core=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.0+9/
 flutter_local_notifications=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-0.8.4/
+geolocator=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/geolocator-5.1.1/
+google_api_availability=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/google_api_availability-2.0.1/
+location_permissions=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/location_permissions-2.0.3/
 path_provider=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.4.4/
 speech_recognition=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/speech_recognition-0.3.0+1/
 sqflite=/home/dan/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.7+2/

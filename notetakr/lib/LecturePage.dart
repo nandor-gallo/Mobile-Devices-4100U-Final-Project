@@ -121,7 +121,7 @@ final _lec_model = CourseModel();
                   builder: (BuildContext context) {
                     String new_lecture = "";
                     String new_code = "";
-                    String new_assignmnet ="";
+                    String new_assignment ="";
                     String due_date = " ";
                     String due_time = "";
                     if (_tabController.index == 0) {
@@ -277,7 +277,7 @@ final _lec_model = CourseModel();
                                       hintText: 'Assignment Title',
                                     ),
                                     onChanged: (text) {
-                                      new_assignmnet = text;
+                                      new_assignment = text;
                                     },
                                   )),
                               Padding(
@@ -362,7 +362,7 @@ final _lec_model = CourseModel();
                                     onPressed: () {
                                       //Send a notification
                                       //TODO Add Assignments
-                                      Assignment current_assignmet = new Assignment(assignmentName: new_assignmnet,courseId: 'CSCI 3030',dueAlert:"4:50",dueDate: "27/09/2018");
+                                      Assignment current_assignmet = new Assignment(assignmentName: new_assignment,courseId: 'CSCI 3030',dueAlert:"4:50",dueDate: "27/09/2018");
                                       _notificationLater(_classDates);
                                       _Add_assignment(current_assignmet);
                                       _displayAssignmentAddBar(context);

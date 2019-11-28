@@ -24,8 +24,9 @@ dependencies:
   charts_flutter: ^0.8.1
   data_tables: ^1.0.1
   cloud_firestore:
-  
   flutter_map: 
+  latlong:
+  geolocator: '5.1.1'
 
 dev_dependencies:
   flutter_test:

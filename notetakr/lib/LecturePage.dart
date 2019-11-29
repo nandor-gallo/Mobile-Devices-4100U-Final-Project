@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
-import 'package:notetakr/map.dart' as prefix1;
+import 'package:notetakr/map.dart' as mapPage;
 import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
 import 'package:notetakr/model/class_model.dart';
@@ -143,7 +143,7 @@ class _LectureListState extends State<LectureList>
                 onTap: () {
                   print("Navigate to Maps Page");
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => prefix1.Map()));
+                      MaterialPageRoute(builder: (context) => mapPage.Map()));
                 },
               ),
               ListTile(

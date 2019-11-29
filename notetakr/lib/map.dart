@@ -10,7 +10,7 @@ class Map extends StatelessWidget {
   final ua = LatLng(43.9446842, -78.896550);
   final sirc = LatLng(43.947750, -78.899262);
   final lib = LatLng(43.9458842, -78.897296);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +42,7 @@ class Map extends StatelessWidget {
                     color: Colors.purple,
                     iconSize: 45.0,
                     onPressed: () {
-                      print('Icon clicked');
+                      print('ERC Icon clicked');
                     },
                   ),
                 ),
@@ -57,7 +57,7 @@ class Map extends StatelessWidget {
                     color: Colors.lightBlue,
                     iconSize: 45.0,
                     onPressed: () {
-                      print('Icon clicked');
+                      print('Business Building(UB) Icon clicked');
                     },
                   ),
                 ),
@@ -72,7 +72,7 @@ class Map extends StatelessWidget {
                     color: Colors.green,
                     iconSize: 45.0,
                     onPressed: () {
-                      print('Icon clicked');
+                      print('Science Building(UA) Icon clicked');
                     },
                   ),
                 ),
@@ -87,7 +87,7 @@ class Map extends StatelessWidget {
                     color: Colors.red,
                     iconSize: 45.0,
                     onPressed: () {
-                      print('Icon clicked');
+                      print('SIRC Icon clicked');
                     },
                   ),
                 ),
@@ -102,7 +102,7 @@ class Map extends StatelessWidget {
                     color: Colors.orange,
                     iconSize: 45.0,
                     onPressed: () {
-                      print('Icon clicked');
+                      print('Library Icon clicked');
                     },
                   ),
                 ),
@@ -111,6 +111,65 @@ class Map extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Text(
+          "?",
+          textScaleFactor: 3.0,
+        ),
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MapLegend()));
+        },
+      ),
     );
+  }
+}
+
+class MapLegend extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+            backgroundColor: Colors.orange,
+            title: Text(
+              "Map Legend",
+            )),
+        body: Container(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("ERC", textScaleFactor: 4.0),
+                  Icon(Icons.location_on, color: Colors.purple, size: 50)
+                ]),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("UB", textScaleFactor: 4.0),
+                  Icon(Icons.location_on, color: Colors.lightBlue, size: 50),
+                ]),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("UA", textScaleFactor: 4.0),
+                  Icon(Icons.location_on, color: Colors.green, size: 50),
+                ]),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("SIRC", textScaleFactor: 4.0),
+                  Icon(Icons.location_on, color: Colors.red, size: 50),
+                ]),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("LIB", textScaleFactor: 4.0),
+                  Icon(Icons.location_on, color: Colors.orange, size: 50),
+                ]),
+              ]),
+        ));
   }
 }

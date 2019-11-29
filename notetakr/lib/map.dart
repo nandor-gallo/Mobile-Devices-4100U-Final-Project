@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Map extends StatelessWidget {
   final erc = LatLng(43.9457342, -78.896296);
@@ -118,14 +119,51 @@ class Map extends StatelessWidget {
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => MapLegend()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LegendPage(title: "Map Legend")));
         },
       ),
     );
   }
 }
 
-class MapLegend extends StatelessWidget {
+class LegendPage extends StatefulWidget {
+  LegendPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _LegendPageState createState() => _LegendPageState();
+}
+
+class _LegendPageState extends State<LegendPage> {
+  var _geolocator = Geolocator();
+  var _posMessage = "";
+  var address = "";
+
+  void _updateLocation(userLocation) {
+    setState(() {
+      _posMessage = 'Lat: ${userLocation.latitude} , Long: ${userLocation.longitude}';
+    });
+
+    _geolocator.placemarkFromCoordinates(userLocation.latitude, userLocation.longitude).then((List<Placemark> places) {
+      for (Placemark place in places) {
+        address = '${place.subThoroughfare} ${place.thoroughfare}';
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    _geolocator
+        .getPositionStream(LocationOptions(
+            accuracy: LocationAccuracy.best, timeInterval: 5000))
+        .listen((userLocation) {
+      _updateLocation(userLocation);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,35 +177,29 @@ class MapLegend extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("ERC", textScaleFactor: 4.0),
                   Icon(Icons.location_on, color: Colors.purple, size: 50)
                 ]),
-                Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("UB", textScaleFactor: 4.0),
                   Icon(Icons.location_on, color: Colors.lightBlue, size: 50),
                 ]),
-                Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("UA", textScaleFactor: 4.0),
                   Icon(Icons.location_on, color: Colors.green, size: 50),
                 ]),
-                Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("SIRC", textScaleFactor: 4.0),
                   Icon(Icons.location_on, color: Colors.red, size: 50),
                 ]),
-                Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Text("LIB", textScaleFactor: 4.0),
                   Icon(Icons.location_on, color: Colors.orange, size: 50),
+                ]),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(" Your Current location: \n $_posMessage \n Current Address:\n$address",
+                      textScaleFactor: 1.5),
                 ]),
               ]),
         ));

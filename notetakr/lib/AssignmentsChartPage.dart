@@ -16,6 +16,27 @@ import 'package:notetakr/model/assignment_model.dart';
   final _model = AssignmentModel();
   List<Assignment> my_list;
   List<Assignment> selected_list; 
+
+
+ /// Create one series with sample hard coded data.
+static List<charts.Series<LinearSales, int>> _createSampleData() {
+    final data = [
+      new LinearSales(0, 5),
+      new LinearSales(1, 25),
+      new LinearSales(2, 100),
+      new LinearSales(3, 75),
+    ];
+
+    return [
+      new charts.Series<LinearSales, int>(
+        id: 'Sales',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (LinearSales sales, _) => sales.year,
+        measureFn: (LinearSales sales, _) => sales.sales,
+        data: data,
+      )
+    ];
+  }
    @override
    void setState(fn) {
      // TODO: implement setState
@@ -32,7 +53,8 @@ import 'package:notetakr/model/assignment_model.dart';
              //var my_map = getAssignmentFreq(snapshot.data);
               my_list = snapshot.data;
               //var series = getAssignmentSeries(my_list);
-             return Column(
+             return SingleChildScrollView(
+             child: Column(
                 children:<Widget> [
                 SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -68,10 +90,16 @@ import 'package:notetakr/model/assignment_model.dart';
 
                 ),
                 Container(
-               child: Text("We stiil need to fix chrt series."),
+                padding: EdgeInsets.all(4),
+                child: SizedBox(
+                width: 300,
+                height: 200,
+                child: charts.LineChart(_createSampleData(),animate: false,)
+                )
+                
                 )
                 ]
-             );
+             ));
            } else {
              return CircularProgressIndicator();
            }
@@ -108,3 +136,11 @@ import 'package:notetakr/model/assignment_model.dart';
     )];
 
  }
+
+
+class LinearSales {
+  final int year;
+  final int sales;
+
+  LinearSales(this.year, this.sales);
+}

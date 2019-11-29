@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+bool isVoted = false;
+
 class Poll {
   final String answer;
   final int votes;
@@ -28,8 +30,6 @@ class TodaysPollsPage extends StatefulWidget {
 }
 
 class TodaysPollsState extends State<TodaysPollsPage> {
-  bool isVoted = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +37,7 @@ class TodaysPollsState extends State<TodaysPollsPage> {
           backgroundColor: Colors.orange,
           title: Text(
             "Which prof would you say is your favourite?",
-            textScaleFactor: 0.9,
+            textScaleFactor: 0.75,
           )),
       body: _buildBody(context),
     );
@@ -80,9 +80,8 @@ class TodaysPollsState extends State<TodaysPollsPage> {
                     style: TextStyle(color: Colors.white))
                 : Text(""),
             onTap: () {
-              if (isVoted == false) {
-                pollresults.reference
-                    .updateData({'votes': FieldValue.increment(1)});
+              if (!isVoted) {
+                pollresults.reference.updateData({'votes': FieldValue.increment(1)});
                 isVoted = true;
               }
             }),

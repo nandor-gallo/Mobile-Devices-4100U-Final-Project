@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
-import 'package:notetakr/map.dart' as prefix1;
+import 'package:notetakr/map.dart' as mapPage;
 import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
 import 'package:notetakr/model/class_model.dart';
@@ -24,10 +24,8 @@ class LectureList extends StatefulWidget {
 }
 
 class _LectureListState extends State<LectureList>
- 
- 
     with SingleTickerProviderStateMixin {
-final _model = AssignmentModel();
+  final _model = AssignmentModel();
 
   final List<String> lectures = [
     'CSCI 3100',
@@ -36,7 +34,7 @@ final _model = AssignmentModel();
     ' Intro to Computer Science'
   ];
 
-final _lec_model = CourseModel();
+  final _lec_model = CourseModel();
   TabController _tabController;
 
   List<Widget> listAssignmentWidget(AsyncSnapshot snapshot) {
@@ -85,8 +83,6 @@ final _lec_model = CourseModel();
                     icon: Icon(Icons.list),
                   ),
                   Tab(text: 'Assignments', icon: Icon(Icons.note)),
-                  
-                  
                 ]),
           ),
           body: TabBarView(
@@ -103,11 +99,7 @@ final _lec_model = CourseModel();
                           .toList()))
                   //TODO: Implement a Future Builder Widget to get Data For the Notes
                   ),
-              
-               Tab(
-                  child: AssignmentChartsPage()
-
-                   ),
+              Tab(child: AssignmentChartsPage()),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -119,328 +111,333 @@ final _lec_model = CourseModel();
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    String new_lecture = "";
-                    String new_code = "";
-                    String new_assignmnet ="";
-                    String due_date = " ";
-                    String due_time = "";
                     if (_tabController.index == 0) {
-                      return new Dialog(
-                          backgroundColor: Colors.cyan,
-                          child: Card(
-                              child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Text('Add A New Class',
-                                      style: TextStyle(
-                                          color: Colors.cyan, fontSize: 15))),
-                              Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Class Name',
-                                    ),
-                                    onChanged: (text) {
-                                      new_lecture = text;
-                                    },
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Course Code'),
-                                  onChanged: (code) {
-                                    new_code = code;
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RaisedButton(
-                                      child: Text('Course Days'),
-                                      color: Colors.cyan,
-                                      textColor: Colors.black,
-                                      onPressed: () {
-                                        showDatePicker(
-                                          context: context,
-                                          firstDate: now,
-                                          lastDate: DateTime(2100),
-                                          initialDate: now,
-                                        ).then((value) {
-                                          setState(() {
-                                            _classDates = DateTime(
-                                              value.year,
-                                              value.month,
-                                              value.day,
-                                              _classDates.hour,
-                                              _classDates.minute,
-                                              _classDates.second,
-                                            );
-                                          });
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child: Text(_toDateString(_classDates)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RaisedButton(
-                                      child: Text('Course Time'),
-                                      color: Colors.cyan,
-                                      textColor: Colors.black,
-                                      onPressed: () {
-                                        showTimePicker(
-                                          context: context,
-                                          initialTime: TimeOfDay(
-                                            hour: now.hour,
-                                            minute: now.minute,
-                                          ),
-                                        ).then((value) {
-                                          setState(() {
-                                            _classDates = DateTime(
-                                              _classDates.year,
-                                              _classDates.month,
-                                              _classDates.day,
-                                              value.hour,
-                                              value.minute,
-                                            );
-                                          });
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child: Text(_toTimeString(_classDates)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ButtonBar(
-                                children: <Widget>[
-                                  FlatButton(
-                                    child: Text("Add"),
-                                    onPressed: () {
-                                      _AddLecturetoDB(
-                                          new_lecture, new_code, _classDates);
-                                      //Send a notification
-                                      _notificationLater(_classDates);
-                                      //Display Snack Bar
-                                      _displayClassAddBar(context);
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text("Cancel"),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ],
-                              )
-                            ],
-                          )));
+                      return _AddCourseDialog();
                     } else if (_tabController.index != 0) {
-                      return new Dialog(
-                          //Dialog for adding assignmment
-                          backgroundColor: Colors.cyan,
-                          child: Card(
-                              child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Text('Add An Assignment',
-                                      style: TextStyle(
-                                          color: Colors.cyan, fontSize: 15))),
-                              Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: 'Assignment Title',
-                                    ),
-                                    onChanged: (text) {
-                                      new_assignmnet = text;
-                                    },
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RaisedButton(
-                                      child: Text('Due Date'),
-                                      color: Colors.cyan,
-                                      textColor: Colors.black,
-                                      onPressed: () {
-                                        showDatePicker(
-                                          context: context,
-                                          firstDate: now,
-                                          lastDate: DateTime(2100),
-                                          initialDate: now,
-                                        ).then((value) {
-                                          setState(() {
-                                            _classDates = DateTime(
-                                              value.year,
-                                              value.month,
-                                              value.day,
-                                              _classDates.hour,
-                                              _classDates.minute,
-                                              _classDates.second,
-                                            );
-                                          });
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child:
-                                          new Text(_toDateString(_classDates)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RaisedButton(
-                                      child: Text('Time Due'),
-                                      color: Colors.cyan,
-                                      textColor: Colors.black,
-                                      onPressed: () {
-                                        showTimePicker(
-                                          context: context,
-                                          initialTime: TimeOfDay(
-                                            hour: now.hour,
-                                            minute: now.minute,
-                                          ),
-                                        ).then((value) {
-                                          setState(() {
-                                            _classDates = DateTime(
-                                              _classDates.year,
-                                              _classDates.month,
-                                              _classDates.day,
-                                              value.hour,
-                                              value.minute,
-                                            );
-                                          });
-                                        });
-                                      },
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 25.0),
-                                      child: Text(_toTimeString(_classDates)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ButtonBar(
-                                children: <Widget>[
-                                  FlatButton(
-                                    child: Text("Add"),
-                                    onPressed: () {
-                                      //Send a notification
-                                      //TODO Add Assignments
-                                      Assignment current_assignmet = new Assignment(assignmentName: new_assignmnet,courseId: 'CSCI 3030',dueAlert:"4:50",dueDate: "27/09/2018");
-                                      _notificationLater(_classDates);
-                                      _Add_assignment(current_assignmet);
-                                      _displayAssignmentAddBar(context);
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text("Cancel"),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ],
-                              )
-                            ],
-                          )));
+                      return _AddAssignmentDialog();
                     }
                   });
             },
           ),
           drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.all(0.6),
-              children: <Widget>[
-                DrawerHeader(
-                  child: Row(
-                    children: <Widget>[
-                      //@Dan Could you add the logo png here
-
-                      Text("NoteTakR")
-                    ],
-                  ),
-                
+              child: ListView(
+            padding: EdgeInsets.all(0.6),
+            children: <Widget>[
+              DrawerHeader(
+                child: Row(
+                  //mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Image.asset('assets/images/logo.png',
+                          fit: BoxFit.cover,),
+                    ),
+                  ],
                 ),
-                ListTile(
-                  leading: Icon(Icons.map),
-                  title: Text("Campus Map"),
-                  onTap: ()
-                  {
-                    print("Navigate to Maps Page");
-                    Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => prefix1.Map()));
-                  },
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue,
                 ),
-                ListTile(
-                  leading: Icon(Icons.pages),
-                  title: Text("Offered Courses"),
-                  onTap: ()
-                  {
-                    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => myhttpWidget()));
-                  },
-
-
-                ),
-                ListTile(
+              ),
+              ListTile(
+                leading: Icon(Icons.map),
+                title: Text("Campus Map"),
+                onTap: () {
+                  print("Navigate to Maps Page");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => mapPage.Map()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.pages),
+                title: Text("Offered Courses"),
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => myhttpWidget()));
+                },
+              ),
+              ListTile(
                   leading: Icon(Icons.assessment),
                   title: Text("Today's Poll"),
-                  onTap: () 
-                  {
-                       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TodaysPollsPage()));
-                  }
-                ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TodaysPollsPage()));
+                  }),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text("Settings"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          )),
+        ));
+  }
 
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text("Settings"),
-                  onTap: ()
-                  {
+  Dialog _AddCourseDialog() {
+    String new_lecture = "";
+    String new_code = "";
+    DateTime now = DateTime.now();
+
+    return new Dialog(
+        backgroundColor: Colors.cyan,
+        child: Card(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.all(4),
+                child: Text('Add A New Class',
+                    style: TextStyle(color: Colors.cyan, fontSize: 15))),
+            Padding(
+                padding: const EdgeInsets.all(4),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Class Name',
+                  ),
+                  onChanged: (text) {
+                    new_lecture = text;
+                  },
+                )),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(), hintText: 'Course Code'),
+                onChanged: (code) {
+                  new_code = code;
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  RaisedButton(
+                    child: Text('Course Days'),
+                    color: Colors.cyan,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      showDatePicker(
+                        context: context,
+                        firstDate: now,
+                        lastDate: DateTime(2100),
+                        initialDate: now,
+                      ).then((value) {
+                        setState(() {
+                          _classDates = DateTime(
+                            value.year,
+                            value.month,
+                            value.day,
+                            _classDates.hour,
+                            _classDates.minute,
+                            _classDates.second,
+                          );
+                        });
+                      });
+                    },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(_toDateString(_classDates)),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  RaisedButton(
+                    child: Text('Course Time'),
+                    color: Colors.cyan,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay(
+                          hour: now.hour,
+                          minute: now.minute,
+                        ),
+                      ).then((value) {
+                        setState(() {
+                          _classDates = DateTime(
+                            _classDates.year,
+                            _classDates.month,
+                            _classDates.day,
+                            value.hour,
+                            value.minute,
+                          );
+                        });
+                      });
+                    },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(_toTimeString(_classDates)),
+                  ),
+                ],
+              ),
+            ),
+            ButtonBar(
+              children: <Widget>[
+                FlatButton(
+                  child: Text("Add"),
+                  onPressed: () {
+                    _AddLecturetoDB(new_lecture, new_code, _classDates);
+                    //Send a notification
+                    _notificationLater(_classDates);
+                    //Display Snack Bar
+                    _displayClassAddBar(context);
                     Navigator.pop(context);
                   },
                 ),
-
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
               ],
             )
-          ),
-        ));
+          ],
+        )));
+  }
+
+  Dialog _AddAssignmentDialog() {
+    DateTime now = DateTime.now();
+    String new_lecture = "";
+    String new_code = "";
+    String new_assignment = "";
+    String due_date = " ";
+    String due_time = "";
+
+    return new Dialog(
+        //Dialog for adding assignmment
+        backgroundColor: Colors.cyan,
+        child: Card(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+                padding: const EdgeInsets.all(4),
+                child: Text('Add An Assignment',
+                    style: TextStyle(color: Colors.cyan, fontSize: 15))),
+            Padding(
+                padding: const EdgeInsets.all(4),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Assignment Title',
+                  ),
+                  onChanged: (text) {
+                    new_assignment = text;
+                  },
+                )),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  RaisedButton(
+                    child: Text('Due Date'),
+                    color: Colors.cyan,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      showDatePicker(
+                        context: context,
+                        firstDate: now,
+                        lastDate: DateTime(2100),
+                        initialDate: now,
+                      ).then((value) {
+                        setState(() {
+                          _classDates = DateTime(
+                            value.year,
+                            value.month,
+                            value.day,
+                            _classDates.hour,
+                            _classDates.minute,
+                            _classDates.second,
+                          );
+                        });
+                      });
+                    },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: new Text(_toDateString(_classDates)),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  RaisedButton(
+                    child: Text('Time Due'),
+                    color: Colors.cyan,
+                    textColor: Colors.black,
+                    onPressed: () {
+                      showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay(
+                          hour: now.hour,
+                          minute: now.minute,
+                        ),
+                      ).then((value) {
+                        setState(() {
+                          _classDates = DateTime(
+                            _classDates.year,
+                            _classDates.month,
+                            _classDates.day,
+                            value.hour,
+                            value.minute,
+                          );
+                        });
+                      });
+                    },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(_toTimeString(_classDates)),
+                  ),
+                ],
+              ),
+            ),
+            ButtonBar(
+              children: <Widget>[
+                FlatButton(
+                  child: Text("Add"),
+                  onPressed: () {
+                    //Send a notification
+                    //TODO Add Assignments
+                    Assignment current_assignmet = new Assignment(
+                        assignmentName: new_assignment,
+                        courseId: 'CSCI 3030',
+                        dueAlert: "4:50",
+                        dueDate: "27/09/2018");
+                    _notificationLater(_classDates);
+                    _Add_assignment(current_assignmet);
+                    _displayAssignmentAddBar(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            )
+          ],
+        )));
   }
 
   void completedDialog(BuildContext context) {
@@ -510,8 +507,7 @@ final _lec_model = CourseModel();
     //TODO: Insert new Lecture to model
   }
 
-  void _Add_assignment(Assignment assignment)
-  {
+  void _Add_assignment(Assignment assignment) {
     _model.insertAssignment(assignment);
   }
 }
@@ -588,27 +584,27 @@ class myhttpWidgetState extends State<myhttpWidget> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return 
-    Scaffold(
-    appBar: new AppBar(
-      title: Text("Ontario Tech U courses", style: TextStyle(fontStyle: FontStyle.italic),),
-
-    ),
-    
-    body:FutureBuilder(
-        future: getEvents(url),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<ProgramElement> classes = snapshot.data.programs.program;
-            classes.forEach((f) => print(f.title));
-            return ListView(
-                children:
-                    classes.map((item) => new ProgramWidget(item)).toList());
-          } else {
-            return CircularProgressIndicator();
-          }
-        })
-    );
+    return Scaffold(
+        appBar: new AppBar(
+          title: Text(
+            "Ontario Tech U courses",
+            style: TextStyle(fontStyle: FontStyle.italic),
+          ),
+        ),
+        body: FutureBuilder(
+            future: getEvents(url),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<ProgramElement> classes = snapshot.data.programs.program;
+                classes.forEach((f) => print(f.title));
+                return ListView(
+                    children: classes
+                        .map((item) => new ProgramWidget(item))
+                        .toList());
+              } else {
+                return CircularProgressIndicator();
+              }
+            }));
   }
 
   Future<Program> getEvents(String url) async {

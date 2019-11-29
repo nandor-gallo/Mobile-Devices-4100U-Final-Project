@@ -19,13 +19,8 @@ import 'package:notetakr/model/assignment_model.dart';
 
 
  /// Create one series with sample hard coded data.
-static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final data = [
-      new LinearSales(0, 5),
-      new LinearSales(1, 25),
-      new LinearSales(2, 100),
-      new LinearSales(3, 75),
-    ];
+ List<charts.Series<LinearSales, int>> _createSampleData(List<LinearSales> data) {
+    
 
     return [
       new charts.Series<LinearSales, int>(
@@ -94,7 +89,7 @@ static List<charts.Series<LinearSales, int>> _createSampleData() {
                 child: SizedBox(
                 width: 300,
                 height: 200,
-                child: charts.LineChart(_createSampleData(),animate: false,)
+                child: charts.LineChart(_createSampleData(_getAssignmentSeries(snapshot.data)),animate: false,)
                 )
                 
                 )
@@ -115,25 +110,22 @@ static List<charts.Series<LinearSales, int>> _createSampleData() {
 
  Map<String, int> getAssignmentFreq(List<Assignment> mylist) {
    Map<String, int> my_map;
- mylist.forEach((item) => {
-         if (my_map.containsKey(item.dueDate))
-           {my_map[item.dueDate] += 1}
-         else
-          {my_map[item.dueDate] = 1}
+   /*
+   mylist.forEach((item) => {
+         my_map.update(item.dueDate=> +=1, ifAbsent: () => 1)L
        });
-
+  */ 
    return my_map;
  }
 
- List<charts.Series<String,int>> getAssignmentSeries(List<Assignment> my_list)
+ List<LinearSales> _getAssignmentSeries(List<Assignment> my_list)
  {
-
+    List<LinearSales> output;
     var dict = getAssignmentFreq(my_list);
-    return [charts.Series(
-      id:"Assignments",
-      data: dict.keys,
-
-    )];
+    dict.forEach((k,v)=> {
+      output.add(new LinearSales(1, v))
+    });
+    return output;
 
  }
 

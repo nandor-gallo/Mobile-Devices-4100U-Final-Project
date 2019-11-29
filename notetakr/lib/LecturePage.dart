@@ -7,6 +7,7 @@ import 'package:notetakr/map.dart' as mapPage;
 import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
 import 'package:notetakr/model/class_model.dart';
+import 'package:notetakr/model/course.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/program.dart';
@@ -26,6 +27,7 @@ class LectureList extends StatefulWidget {
 class _LectureListState extends State<LectureList>
     with SingleTickerProviderStateMixin {
   final _model = AssignmentModel();
+  final _class_model = CourseModel();
 
   final List<String> lectures = [
     'CSCI 3100',
@@ -504,10 +506,13 @@ class _LectureListState extends State<LectureList>
 
   void _AddLecturetoDB(String new_lecture, String new_code, DateTime date) {
     print("Add Class $new_lecture  and $new_code to  Database With $date");
-    //TODO: Insert new Lecture to model
+    Course new_course = new Course(courseName: new_lecture,courseCode: new_code,courseDays: date.toString());
+    _class_model.insertCourse(new_course); 
   }
 
   void _Add_assignment(Assignment assignment) {
+    print("Inside add assignment Lecture Page $assignment");
+
     _model.insertAssignment(assignment);
   }
 }

@@ -109,18 +109,20 @@ import 'package:notetakr/model/assignment_model.dart';
  }
 
  Map<String, int> getAssignmentFreq(List<Assignment> mylist) {
-   Map<String, int> my_map;
-   /*
-   mylist.forEach((item) => {
-         my_map.update(item.dueDate=> +=1, ifAbsent: () => 1)L
+   Map<String, int> my_map = new Map();
+ mylist.forEach((item) => {
+         if (my_map.containsKey(item.dueDate))
+           {my_map[item.dueDate] += 1}
+         else
+          {my_map[item.dueDate] = 1}
        });
-  */ 
+
    return my_map;
  }
 
  List<LinearSales> _getAssignmentSeries(List<Assignment> my_list)
  {
-    List<LinearSales> output;
+    List<LinearSales> output = new List();
     var dict = getAssignmentFreq(my_list);
     dict.forEach((k,v)=> {
       output.add(new LinearSales(1, v))

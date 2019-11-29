@@ -119,13 +119,82 @@ final _lec_model = CourseModel();
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    String new_lecture = "";
-                    String new_code = "";
-                    String new_assignment ="";
-                    String due_date = " ";
-                    String due_time = "";
+                   
                     if (_tabController.index == 0) {
-                      return new Dialog(
+                      return _AddCourseDialog();
+                    } else if (_tabController.index != 0) {
+                      return _AddAssignmentDialog(); 
+                    }
+                  });
+            },
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.all(0.6),
+              children: <Widget>[
+                DrawerHeader(
+                  child: Row(
+                    children: <Widget>[
+                      //@Dan Could you add the logo png here
+
+                      Text("NoteTakR")
+                    ],
+                  ),
+                
+                ),
+                ListTile(
+                  leading: Icon(Icons.map),
+                  title: Text("Campus Map"),
+                  onTap: ()
+                  {
+                    print("Navigate to Maps Page");
+                    Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => prefix1.Map()));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.pages),
+                  title: Text("Offered Courses"),
+                  onTap: ()
+                  {
+                    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => myhttpWidget()));
+                  },
+
+
+                ),
+                ListTile(
+                  leading: Icon(Icons.assessment),
+                  title: Text("Today's Poll"),
+                  onTap: () 
+                  {
+                       Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodaysPollsPage()));
+                  }
+                ),
+
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text("Settings"),
+                  onTap: ()
+                  {
+                    Navigator.pop(context);
+                  },
+                ),
+
+              ],
+            )
+          ),
+        ));
+  }
+  Dialog _AddCourseDialog() 
+  {
+     String new_lecture = "";
+    String new_code = "";
+    DateTime now = DateTime.now();
+
+    return new Dialog(
+      
                           backgroundColor: Colors.cyan,
                           child: Card(
                               child: Column(
@@ -256,8 +325,20 @@ final _lec_model = CourseModel();
                               )
                             ],
                           )));
-                    } else if (_tabController.index != 0) {
-                      return new Dialog(
+  }
+  
+
+  Dialog _AddAssignmentDialog() 
+  {
+    
+    DateTime now = DateTime.now();
+      String new_lecture = "";
+      String new_code = "";
+      String new_assignment ="";
+      String due_date = " ";
+      String due_time = "";
+    
+    return new Dialog(
                           //Dialog for adding assignmment
                           backgroundColor: Colors.cyan,
                           child: Card(
@@ -379,70 +460,8 @@ final _lec_model = CourseModel();
                               )
                             ],
                           )));
-                    }
-                  });
-            },
-          ),
-          drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.all(0.6),
-              children: <Widget>[
-                DrawerHeader(
-                  child: Row(
-                    children: <Widget>[
-                      //@Dan Could you add the logo png here
-
-                      Text("NoteTakR")
-                    ],
-                  ),
-                
-                ),
-                ListTile(
-                  leading: Icon(Icons.map),
-                  title: Text("Campus Map"),
-                  onTap: ()
-                  {
-                    print("Navigate to Maps Page");
-                    Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => prefix1.Map()));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.pages),
-                  title: Text("Offered Courses"),
-                  onTap: ()
-                  {
-                    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => myhttpWidget()));
-                  },
-
-
-                ),
-                ListTile(
-                  leading: Icon(Icons.assessment),
-                  title: Text("Today's Poll"),
-                  onTap: () 
-                  {
-                       Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TodaysPollsPage()));
-                  }
-                ),
-
-                ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text("Settings"),
-                  onTap: ()
-                  {
-                    Navigator.pop(context);
-                  },
-                ),
-
-              ],
-            )
-          ),
-        ));
   }
-
+  
   void completedDialog(BuildContext context) {
     var completed = Dialog(
         backgroundColor: Colors.cyan,
@@ -562,6 +581,7 @@ String _twoDigits(int value) {
   }
 }
 
+
 String _toDateString(DateTime dateTime) {
   return '${dateTime.year}/${dateTime.month}/${dateTime.day}';
 }
@@ -652,3 +672,5 @@ class ProgramWidget extends StatelessWidget {
     );
   }
 }
+
+

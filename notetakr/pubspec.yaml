@@ -49,4 +49,5 @@ flutter:
     - lang/en.json
     - lang/fr.json
     - assets/
+    - assets/images/
     

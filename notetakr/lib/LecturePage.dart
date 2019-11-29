@@ -11,6 +11,7 @@ import 'package:notetakr/model/course.dart';
 import 'package:notetakr/model/program.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/program.dart';
+import 'package:notetakr/settings.dart';
 import 'MyNotesPage.dart';
 import 'model/program.dart';
 import 'utils/Notifications.dart';
@@ -67,8 +68,6 @@ class _LectureListState extends State<LectureList>
   @override
   Widget build(BuildContext context) {
     _notifications.init();
-    String newAssignment = "";
-    DateTime now = DateTime.now();
     //Tabs With Items
     return new DefaultTabController(
         length: 2,
@@ -169,7 +168,10 @@ class _LectureListState extends State<LectureList>
                 leading: Icon(Icons.settings),
                 title: Text("Settings"),
                 onTap: () {
-                  Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Settings()));
                 },
               ),
             ],
@@ -338,6 +340,7 @@ class _LectureListState extends State<LectureList>
                   ),
                   onChanged: (text) {
                     new_assignment = text;
+                    print(new_assignment);
                   },
                 )),
             Padding(

@@ -19,15 +19,15 @@ import 'package:notetakr/model/assignment_model.dart';
 
 
  /// Create one series with sample hard coded data.
- List<charts.Series<LinearSales, int>> _createSampleData(List<LinearSales> data) {
+ List<charts.Series<AssignmentSeries, int>> _createSampleData(List<AssignmentSeries> data) {
     
 
     return [
-      new charts.Series<LinearSales, int>(
+      new charts.Series<AssignmentSeries, int>(
         id: 'Sales',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
+        domainFn: (AssignmentSeries asign, _) => asign.series_id,
+        measureFn: (AssignmentSeries asign, _) => asign.count,
         data: data,
       )
     ];
@@ -120,21 +120,24 @@ import 'package:notetakr/model/assignment_model.dart';
    return my_map;
  }
 
- List<LinearSales> _getAssignmentSeries(List<Assignment> my_list)
+ List<AssignmentSeries> _getAssignmentSeries(List<Assignment> my_list)
  {
-    List<LinearSales> output = new List();
+    List<AssignmentSeries> output = new List();
+    int id = 0;
     var dict = getAssignmentFreq(my_list);
     dict.forEach((k,v)=> {
-      output.add(new LinearSales(1, v))
+      output.add(new AssignmentSeries(id,k, v)),
+      id+=1
     });
     return output;
 
  }
 
 
-class LinearSales {
-  final int year;
-  final int sales;
+class AssignmentSeries {
+  int series_id;
+  final String date;
+  final int count;
 
-  LinearSales(this.year, this.sales);
+  AssignmentSeries(this.series_id,this.date, this.count);
 }

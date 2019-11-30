@@ -143,15 +143,20 @@ class _LegendPageState extends State<LegendPage> {
   var address = "";
 
   void _updateLocation(userLocation) {
-    setState(() {
-      _posMessage = 'Lat: ${userLocation.latitude} , Long: ${userLocation.longitude}';
-    });
-
-    _geolocator.placemarkFromCoordinates(userLocation.latitude, userLocation.longitude).then((List<Placemark> places) {
-      for (Placemark place in places) {
-        address = '${place.subThoroughfare} ${place.thoroughfare}';
-      }
-    });
+    if (this.mounted) {
+      setState(() {
+        _posMessage =
+            'Lat: ${userLocation.latitude} , Long: ${userLocation.longitude}';
+        _geolocator
+            .placemarkFromCoordinates(
+                userLocation.latitude, userLocation.longitude)
+            .then((List<Placemark> places) {
+          for (Placemark place in places) {
+            address = '${place.subThoroughfare} ${place.thoroughfare}';
+          }
+        });
+      });
+    }
   }
 
   @override
@@ -198,7 +203,8 @@ class _LegendPageState extends State<LegendPage> {
                   Icon(Icons.location_on, color: Colors.orange, size: 50),
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(" Your Current location: \n $_posMessage \n Current Address:\n$address",
+                  Text(
+                      " Your Current location: \n $_posMessage \n Current Address:\n$address",
                       textScaleFactor: 1.5),
                 ]),
               ]),

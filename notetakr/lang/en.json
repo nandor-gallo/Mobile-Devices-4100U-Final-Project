@@ -1,3 +1,33 @@
 {
+    "assignments_string": "Assignments",
+    "notes_string": "Notes",
+    "add_class_string" : "Add A New Class",
+    "class_string" : "Class Name",
+    "course_string" : "Course Code",
+    "coursedays_string" : "Course Days",
+    "coursetime_string" : "Course Time",
+    "add_string" : "Add",
+    "cancel_string" : "Cancel",
+    "assign_name_string" : "Assignment Name",
+    "assign_title_string" : "Assignment Title",
+    "duedate_string" : "Due Date",
+    "addassignment_string" : "Add An Assignment",
+    "timedue_string" : "Time Due",
+    "campusmap_string" : "Campus Map",
+    "offerd_courses_string" : "Offered Courses",
+    "todayspoll_string" : "Today's Poll",
+    "setting_string" : "Settings",
+    "maplegend_string" : "Map Legend",
+    "yourlocation_string" : "Your Current Location:",
+    "currentaddr_string" : "Current Addresss:",
+    "ontariotech_string" : "Ontario Tech U Courses",
+    "faveprof_string" : "Which professor was your favorite?",
+    "add_note_string" : "Add Note Page",
+    "notename_string" : "Note Name",
+    "content_string" : "Content",
+    "new_class_added_dialog" : "New Class Added!",
+    "new_assignment_added_dialog" : "New Assignment Added!"
+
+
     
 }

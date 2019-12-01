@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
+import 'app_localizations.dart';
 
  class AssignmentChartsPage extends StatefulWidget {
   @override
@@ -56,11 +57,11 @@ import 'package:notetakr/model/assignment_model.dart';
                   child: DataTable(
                     columns: [
                     DataColumn(
-                      label: Text("Assignment Name"),
+                      label: Text(AppLocalizations.of(context).translate('assign_name_string')),
                       numeric: false,
                     ),
                     DataColumn(
-                      label: Text("Due Date"),
+                      label:Text(AppLocalizations.of(context).translate('duedate_string')),
                       numeric: false,
                     )
                     ],

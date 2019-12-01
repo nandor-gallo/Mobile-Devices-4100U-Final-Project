@@ -1,3 +1,32 @@
 {
-    
+    "assignments_string": "Missions",
+    "notes_string": "Remarques",
+    "add_class_string" : "Ajouter Une Nouvelle Classe",
+    "class_string" : "Nom Du Cours",
+    "course_string" : "Code De Cours",
+    "coursedays_string" : "Jours De Cours",
+    "coursetime_string" : "Temps Du Cours",
+    "add_string" : "Ajouter",
+    "cancel_string" : "Annuler",
+    "assign_name_string" : "Nom De l'affectation",
+    "assign_title_string" : "Titre De l'affectation",
+    "duedate_string" : "Date d'échéance",
+    "addassignment_string" : "Ajouter Une Affectation",
+    "timedue_string" : "Temps dû",
+    "campusmap_string" : "Carte Du Campus",
+    "offerd_courses_string" : "Cours Offerts",
+    "todayspoll_string" : "Sondage d'aujourd'hui",
+    "setting_string" : "Paramètres",
+    "maplegend_string" : "Légende de carte",
+    "yourlocation_string" : "Ta Location Actuelle:",
+    "currentaddr_string" : "Adresse Actuelle:",
+    "ontariotech_string" : "Ontario Tech U cours",
+    "faveprof_string" : "Quel professeur était votre favori?",
+    "add_note_string" : "Ajouter une page de note",
+    "notename_string" : "Nom de la note",
+    "content_string" : "Contenu",
+    "new_class_added_dialog" : "Nouvelle Classe Ajoutée!",
+    "new_assignment_added_dialog" : "Nouvelle Affectation Ajoutée!"
+
+
 }

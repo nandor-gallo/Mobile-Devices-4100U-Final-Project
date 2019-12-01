@@ -1,6 +1,7 @@
 // Using firebase to store the daily poll results
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'app_localizations.dart';
 
 bool isVoted = false;
 
@@ -35,8 +36,7 @@ class TodaysPollsState extends State<TodaysPollsPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.orange,
-          title: Text(
-            "Which prof would you say is your favourite?",
+          title: Text(AppLocalizations.of(context).translate('faveprof_string'),
             textScaleFactor: 0.75,
           )),
       body: _buildBody(context),

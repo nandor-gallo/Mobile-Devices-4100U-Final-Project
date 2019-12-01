@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notetakr/AssignmentsChartPage.dart';
 import 'package:notetakr/TodaysPolls.dart';
+import 'package:notetakr/app_localizations.dart';
 import 'package:notetakr/map.dart' as mapPage;
 import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
@@ -80,10 +81,10 @@ class _LectureListState extends State<LectureList>
                 controller: _tabController,
                 tabs: <Widget>[
                   Tab(
-                    text: 'Notes',
+                    text: AppLocalizations.of(context).translate('notes_string'),
                     icon: Icon(Icons.list),
                   ),
-                  Tab(text: 'Assignments', icon: Icon(Icons.note)),
+                  Tab(text:AppLocalizations.of(context).translate('assignments_string'), icon: Icon(Icons.note)),
                 ]),
           ),
           body: TabBarView(
@@ -140,7 +141,7 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                 leading: Icon(Icons.map),
-                title: Text("Campus Map"),
+                title: Text(AppLocalizations.of(context).translate('campusmap_string')),
                 onTap: () {
                   print("Navigate to Maps Page");
                   Navigator.push(context,
@@ -149,7 +150,7 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                 leading: Icon(Icons.pages),
-                title: Text("Offered Courses"),
+                title: Text(AppLocalizations.of(context).translate('offerd_courses_string')),
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => myhttpWidget()));
@@ -157,7 +158,7 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                   leading: Icon(Icons.assessment),
-                  title: Text("Today's Poll"),
+                  title: Text(AppLocalizations.of(context).translate('todayspoll_string')),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -166,7 +167,7 @@ class _LectureListState extends State<LectureList>
                   }),
               ListTile(
                 leading: Icon(Icons.settings),
-                title: Text("Settings"),
+                title: Text(AppLocalizations.of(context).translate('setting_string')),
                 onTap: () {
                     Navigator.push(
                         context,
@@ -192,14 +193,14 @@ class _LectureListState extends State<LectureList>
           children: <Widget>[
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: Text('Add A New Class',
+                child: Text(AppLocalizations.of(context).translate('add_class_string'),
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Class Name',
+                    hintText: AppLocalizations.of(context).translate('class_string'),
                   ),
                   onChanged: (text) {
                     new_lecture = text;
@@ -209,7 +210,7 @@ class _LectureListState extends State<LectureList>
               padding: const EdgeInsets.all(4),
               child: TextField(
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(), hintText: 'Course Code'),
+                border: OutlineInputBorder(), hintText: AppLocalizations.of(context).translate('course_string')),
                 onChanged: (code) {
                   new_code = code;
                 },
@@ -221,7 +222,7 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text('Course Days'),
+                    child: Text(AppLocalizations.of(context).translate('coursedays_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -257,7 +258,7 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text('Course Time'),
+                    child: Text(AppLocalizations.of(context).translate('coursetime_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -290,7 +291,7 @@ class _LectureListState extends State<LectureList>
             ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: Text("Add"),
+                  child: Text(AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
                     _AddLecturetoDB(new_lecture, new_code, _classDates);
                     //Send a notification
@@ -301,7 +302,7 @@ class _LectureListState extends State<LectureList>
                   },
                 ),
                 FlatButton(
-                  child: Text("Cancel"),
+                  child: Text(AppLocalizations.of(context).translate('cancel_string')),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -329,14 +330,14 @@ class _LectureListState extends State<LectureList>
           children: <Widget>[
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: Text('Add An Assignment',
+                child: Text(AppLocalizations.of(context).translate('addassignment_string'),
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Assignment Title',
+                    hintText: AppLocalizations.of(context).translate('assign_title_string'),
                   ),
                   onChanged: (text) {
                     new_assignment = text;
@@ -349,7 +350,7 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text('Due Date'),
+                    child: Text(AppLocalizations.of(context).translate('duedate_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -385,7 +386,7 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text('Time Due'),
+                    child: Text(AppLocalizations.of(context).translate('timedue_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -418,7 +419,7 @@ class _LectureListState extends State<LectureList>
             ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: Text("Add"),
+                  child: Text(AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
                     //Send a notification
                     //TODO Add Assignments
@@ -434,7 +435,7 @@ class _LectureListState extends State<LectureList>
                   },
                 ),
                 FlatButton(
-                  child: Text("Cancel"),
+                  child: Text(AppLocalizations.of(context).translate('cancel_string')),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -481,12 +482,12 @@ class _LectureListState extends State<LectureList>
   }
 
   _displayClassAddBar(BuildContext context) {
-    final snackBar = SnackBar(content: Text('New Class Added!'));
+    final snackBar = SnackBar(content: Text(AppLocalizations.of(context).translate('new_class_added_dialog')));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   _displayAssignmentAddBar(BuildContext context) {
-    final snackBar = SnackBar(content: Text('New Assignment Added!'));
+    final snackBar = SnackBar(content: Text(AppLocalizations.of(context).translate('new_assignment_added_dialog')));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
@@ -594,8 +595,7 @@ class myhttpWidgetState extends State<myhttpWidget> {
     // TODO: implement build
     return Scaffold(
         appBar: new AppBar(
-          title: Text(
-            "Ontario Tech U courses",
+          title: Text(AppLocalizations.of(context).translate('ontariotech_string'),
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
         ),

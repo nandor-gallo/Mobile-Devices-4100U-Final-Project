@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notetakr/model/note_model.dart';
 import 'package:speech_recognition/speech_recognition.dart';
-
+import 'app_localizations.dart';
 import 'model/note.dart';
 
 
@@ -57,7 +57,7 @@ class AddNote extends StatefulWidget{
     // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(
-        title: Text('Add Note Page'),
+        title: Text(AppLocalizations.of(context).translate('add_note_string')),
 
       ),
       body: new Center(
@@ -67,7 +67,7 @@ class AddNote extends StatefulWidget{
             padding: const EdgeInsets.all(4),
             child: TextFormField(
               decoration: InputDecoration(
-                hintText: 'Note Name', 
+                hintText: AppLocalizations.of(context).translate('notename_string'), 
               ),
               onChanged: (text) 
               {
@@ -79,7 +79,7 @@ class AddNote extends StatefulWidget{
               padding:  const EdgeInsets.all(4),
               child: TextField(
                 
-                decoration: InputDecoration(hintText: 'Content'),
+                decoration: InputDecoration(hintText: AppLocalizations.of(context).translate('content_string')),
                 keyboardType: TextInputType.multiline,
                 onChanged: (text_2) 
                 {

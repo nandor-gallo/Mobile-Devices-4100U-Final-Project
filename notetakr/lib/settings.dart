@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'app_localizations.dart';
 import 'package:notetakr/model/note.dart';
 import 'package:notetakr/model/note_model.dart';
 import 'package:path/path.dart';
@@ -30,7 +31,7 @@ class SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title:  Text(AppLocalizations.of(context).translate('setting_string')),
         
       ),
       body: Container(

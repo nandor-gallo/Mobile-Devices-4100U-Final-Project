@@ -15,6 +15,7 @@ import 'package:notetakr/model/program.dart';
 import 'package:notetakr/settings.dart';
 import 'MyNotesPage.dart';
 import 'model/program.dart';
+import 'myhttpwidget.dart';
 import 'utils/Notifications.dart';
 import 'package:http/http.dart' as http;
 import 'model/assignment_model.dart';
@@ -31,13 +32,7 @@ class _LectureListState extends State<LectureList>
   final _model = AssignmentModel();
   final _class_model = CourseModel();
 
-  final List<String> lectures = [
-    'CSCI 3100',
-    'CSCI 4100',
-    'CSCI 4500',
-    ' Intro to Computer Science'
-  ];
-
+  List<Course> my_list;
   final _lec_model = CourseModel();
   TabController _tabController;
 
@@ -98,15 +93,23 @@ class _LectureListState extends State<LectureList>
             children: <Widget>[
               Tab(
                   //Grid of Classes
-                  child: GridView.count(
-                      primary: true,
-                      crossAxisCount: 4,
-                      children: (lectures
-                          .map((lecture) =>
-                              new LectureWidget(this.context, lecture))
-                          .toList()))
-                  //TODO: Implement a Future Builder Widget to get Data For the Notes
-                  ),
+                  child: FutureBuilder(
+                      future: _lec_model.getAllCourse(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                         my_list = snapshot.data; 
+                         return  GridView.count(
+                              primary: true,
+                              crossAxisCount: 4,
+                              children: ( my_list
+                                  .map((lecture) =>
+                                      new LectureWidget(this.context,lecture))
+                                  .toList()));
+                          
+                        } else {
+                          return new Center (child:Text("Please Add Courses"));
+                        }
+                      })),
               Tab(child: AssignmentChartsPage()),
             ],
           ),
@@ -191,25 +194,33 @@ class _LectureListState extends State<LectureList>
   }
 
   Dialog _AddCourseDialog() {
-    var new_lecture ;
-    var  new_code;
+    var new_lecture;
+    var new_code;
+    
     DateTime now = DateTime.now();
+    String class_time = _toTimeString(now); 
+    String class_day = _toDateString(now);
+    final my_controller_1 = TextEditingController();
+    final my_controller_2 = TextEditingController();
 
     
-    
-    
-    Future<void> _AddLecturetoDB(Course course) async{
-    print('Inside Add lecture to DB $course');
+    Future<void> _AddLecturetoDB(Course course) async {
+      print('Inside Add lecture to DB $course');
+       if(course.courseName==null) 
+       {
+         print('Course input is null'); 
+         return; 
+       }
 
-    _lec_model.insertCourse(course);
-  }
-    
-    
+
+      _lec_model.insertCourse(course);
+    }
+
     return new Dialog(
         backgroundColor: Colors.cyan,
-        child:SingleChildScrollView( 
-        child: Card(
-            child: Column(
+        child: SingleChildScrollView(
+            child: Card(
+                child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
@@ -227,8 +238,8 @@ class _LectureListState extends State<LectureList>
                   ),
                   onChanged: (text) {
                     new_lecture = text;
-                    
                   },
+                  controller: my_controller_1,
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
@@ -239,8 +250,8 @@ class _LectureListState extends State<LectureList>
                         .translate('course_string')),
                 onChanged: (code) {
                   new_code = code;
-                  
                 },
+              controller: my_controller_2,
               ),
             ),
             Padding(
@@ -324,8 +335,14 @@ class _LectureListState extends State<LectureList>
                       AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
                     Course course;
-                    course = new Course(courseName: new_lecture, courseCode: new_code, courseDays: now.toString());
-                    print(course.toString());
+                    course = new Course(
+                        courseName: new_lecture,
+                        courseCode: new_code,
+                        courseDays: _toDateString(_classDates),
+                        courseTime: _toTimeString(_classDates),
+
+                    );
+                    print("Inside add course dialog $course");
                     _AddLecturetoDB(course);
                     print("$new_lecture (end of lec), $new_code (end of code)");
                     //Send a notification
@@ -346,7 +363,6 @@ class _LectureListState extends State<LectureList>
             )
           ],
         ))));
-
   }
 
   Dialog _AddAssignmentDialog() {
@@ -360,8 +376,8 @@ class _LectureListState extends State<LectureList>
         //Dialog for adding assignmment
         backgroundColor: Colors.cyan,
         child: SingleChildScrollView(
-          child: Card(
-            child: Column(
+            child: Card(
+                child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
@@ -562,8 +578,6 @@ class _LectureListState extends State<LectureList>
     _model.completedAssignment(id);
   }
 
-  
-
   void _Add_assignment(Assignment assignment) {
     print("Inside add assignment Lecture Page $assignment");
 
@@ -581,29 +595,68 @@ class _LectureListState extends State<LectureList>
 //   }
 
 class LectureWidget extends StatelessWidget {
-  String title;
+  Course title;
   BuildContext context;
-  LectureWidget(context, String title) {
+  final _model = CourseModel();
+  
+  LectureWidget(context, Course title) {
     this.context = context;
     this.title = title;
   }
   @override
   Widget build(BuildContext context) {
-    return new Card(
+    return new GestureDetector( 
+    onLongPress: () 
+    {
+      
+    showDialog(
+      context: context,
+      builder: (BuildContext context)
+      {
+        return AlertDialog(
+          title: Text("Delete ${title.courseName}"),
+          actions: <Widget>[
+            new FlatButton(
+              child: Text("Cancel"),
+              onPressed: () 
+              {
+                Navigator.pop(context);
+              },
+            ),
+            new FlatButton(
+              child: Text('Delete'),
+              onPressed: ()
+              {
+                _model.deleteCourse(this.title);
+                setState(){
+
+                }
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      }
+    );
+    },
+    child: Card(
         color: Colors.blueAccent,
         child: InkWell(
             splashColor: Colors.blue,
             onTap: () {
               print('Card tapped.');
-              _navigatetoAddPage(context, this.title);
+              _navigatetoAddPage(context, this.title.courseName);
             },
             child: Container(
               width: 300,
               height: 100,
               child: Center(
-                child: Text(this.title),
+                child: Text(this.title.courseName),
               ),
-            )));
+            ))
+          
+            
+            ));
   }
 
   void _navigatetoAddPage(context, String lecture) {
@@ -631,83 +684,4 @@ String _toTimeStampString(Timestamp time) {
 
 String _toTimeString(DateTime dateTime) {
   return '${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}';
-}
-
-class myhttpWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return myhttpWidgetState();
-  }
-}
-
-class myhttpWidgetState extends State<myhttpWidget> {
-  final String url = "https://ontariotechu.ca/programs/index.json";
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-        appBar: new AppBar(
-          title: Text(
-            AppLocalizations.of(context).translate('ontariotech_string'),
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-        body: FutureBuilder(
-            future: getEvents(url),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<ProgramElement> classes = snapshot.data.programs.program;
-                classes.forEach((f) => print(f.title));
-                return ListView(
-                    children: classes
-                        .map((item) => new ProgramWidget(item))
-                        .toList());
-              } else {
-                return CircularProgressIndicator();
-              }
-            }));
-  }
-
-  Future<Program> getEvents(String url) async {
-    var response = await http.get(url);
-
-    return programFromJson(response.body);
-    //TODO: Create an event class and  Return List of JSON
-  }
-}
-
-class ProgramWidget extends StatelessWidget {
-  prefix0.ProgramElement element;
-
-  ProgramWidget(ProgramElement element) {
-    this.element = element;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return new GestureDetector(
-      onTap: () {},
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Text(
-              this.element.title,
-              style: TextStyle(color: Colors.cyan, fontSize: 16),
-            ),
-            Text(
-              this.element.summary,
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            Text(
-              '${this.element.faculty}',
-              style: TextStyle(color: Colors.grey, fontSize: 10),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

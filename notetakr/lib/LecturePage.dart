@@ -41,6 +41,8 @@ class _LectureListState extends State<LectureList>
   final _lec_model = CourseModel();
   TabController _tabController;
 
+  List<Course> my_courses = new List();
+
   List<Widget> listAssignmentWidget(AsyncSnapshot snapshot) {
     return snapshot.data.documents.map<Widget>((document) {
       return ListTile(
@@ -81,10 +83,14 @@ class _LectureListState extends State<LectureList>
                 controller: _tabController,
                 tabs: <Widget>[
                   Tab(
-                    text: AppLocalizations.of(context).translate('notes_string'),
+                    text:
+                        AppLocalizations.of(context).translate('notes_string'),
                     icon: Icon(Icons.list),
                   ),
-                  Tab(text:AppLocalizations.of(context).translate('assignments_string'), icon: Icon(Icons.note)),
+                  Tab(
+                      text: AppLocalizations.of(context)
+                          .translate('assignments_string'),
+                      icon: Icon(Icons.note)),
                 ]),
           ),
           body: TabBarView(
@@ -130,8 +136,10 @@ class _LectureListState extends State<LectureList>
                   //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Expanded(
-                      child: Image.asset('assets/images/logo.png',
-                          fit: BoxFit.cover,),
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ],
                 ),
@@ -141,7 +149,8 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                 leading: Icon(Icons.map),
-                title: Text(AppLocalizations.of(context).translate('campusmap_string')),
+                title: Text(
+                    AppLocalizations.of(context).translate('campusmap_string')),
                 onTap: () {
                   print("Navigate to Maps Page");
                   Navigator.push(context,
@@ -150,7 +159,8 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                 leading: Icon(Icons.pages),
-                title: Text(AppLocalizations.of(context).translate('offerd_courses_string')),
+                title: Text(AppLocalizations.of(context)
+                    .translate('offerd_courses_string')),
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => myhttpWidget()));
@@ -158,7 +168,8 @@ class _LectureListState extends State<LectureList>
               ),
               ListTile(
                   leading: Icon(Icons.assessment),
-                  title: Text(AppLocalizations.of(context).translate('todayspoll_string')),
+                  title: Text(AppLocalizations.of(context)
+                      .translate('todayspoll_string')),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -167,12 +178,11 @@ class _LectureListState extends State<LectureList>
                   }),
               ListTile(
                 leading: Icon(Icons.settings),
-                title: Text(AppLocalizations.of(context).translate('setting_string')),
+                title: Text(
+                    AppLocalizations.of(context).translate('setting_string')),
                 onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Settings()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Settings()));
                 },
               ),
             ],
@@ -181,38 +191,55 @@ class _LectureListState extends State<LectureList>
   }
 
   Dialog _AddCourseDialog() {
-    String new_lecture = "";
-    String new_code = "";
+    var new_lecture ;
+    var  new_code;
     DateTime now = DateTime.now();
 
+    
+    
+    
+    Future<void> _AddLecturetoDB(Course course) async{
+    print('Inside Add lecture to DB $course');
+
+    _lec_model.insertCourse(course);
+  }
+    
+    
     return new Dialog(
         backgroundColor: Colors.cyan,
+        child:SingleChildScrollView( 
         child: Card(
             child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: Text(AppLocalizations.of(context).translate('add_class_string'),
+                child: Text(
+                    AppLocalizations.of(context).translate('add_class_string'),
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: AppLocalizations.of(context).translate('class_string'),
+                    hintText:
+                        AppLocalizations.of(context).translate('class_string'),
                   ),
                   onChanged: (text) {
                     new_lecture = text;
+                    
                   },
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
               child: TextField(
                 decoration: InputDecoration(
-                border: OutlineInputBorder(), hintText: AppLocalizations.of(context).translate('course_string')),
+                    border: OutlineInputBorder(),
+                    hintText: AppLocalizations.of(context)
+                        .translate('course_string')),
                 onChanged: (code) {
                   new_code = code;
+                  
                 },
               ),
             ),
@@ -222,7 +249,8 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text(AppLocalizations.of(context).translate('coursedays_string')),
+                    child: Text(AppLocalizations.of(context)
+                        .translate('coursedays_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -258,7 +286,8 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text(AppLocalizations.of(context).translate('coursetime_string')),
+                    child: Text(AppLocalizations.of(context)
+                        .translate('coursetime_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -291,9 +320,14 @@ class _LectureListState extends State<LectureList>
             ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: Text(AppLocalizations.of(context).translate('add_string')),
+                  child: Text(
+                      AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
-                    _AddLecturetoDB(new_lecture, new_code, _classDates);
+                    Course course;
+                    course = new Course(courseName: new_lecture, courseCode: new_code, courseDays: now.toString());
+                    print(course.toString());
+                    _AddLecturetoDB(course);
+                    print("$new_lecture (end of lec), $new_code (end of code)");
                     //Send a notification
                     _notificationLater(_classDates);
                     //Display Snack Bar
@@ -302,7 +336,8 @@ class _LectureListState extends State<LectureList>
                   },
                 ),
                 FlatButton(
-                  child: Text(AppLocalizations.of(context).translate('cancel_string')),
+                  child: Text(
+                      AppLocalizations.of(context).translate('cancel_string')),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -310,39 +345,43 @@ class _LectureListState extends State<LectureList>
               ],
             )
           ],
-        )));
+        ))));
+
   }
 
   Dialog _AddAssignmentDialog() {
     DateTime now = DateTime.now();
-    String new_lecture = "";
-    String new_code = "";
     String new_assignment = "";
-    String due_date = " ";
-    String due_time = "";
+    String due_alert = _toTimeString(now);
+    String due_time = _toDateString(now);
+    final my_controller = TextEditingController();
 
     return new Dialog(
         //Dialog for adding assignmment
         backgroundColor: Colors.cyan,
-        child: Card(
+        child: SingleChildScrollView(
+          child: Card(
             child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: Text(AppLocalizations.of(context).translate('addassignment_string'),
+                child: Text(
+                    AppLocalizations.of(context)
+                        .translate('addassignment_string'),
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: AppLocalizations.of(context).translate('assign_title_string'),
+                    hintText: AppLocalizations.of(context)
+                        .translate('assign_title_string'),
                   ),
                   onChanged: (text) {
                     new_assignment = text;
-                    print(new_assignment);
                   },
+                  controller: my_controller,
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
@@ -350,7 +389,8 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text(AppLocalizations.of(context).translate('duedate_string')),
+                    child: Text(AppLocalizations.of(context)
+                        .translate('duedate_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -369,6 +409,8 @@ class _LectureListState extends State<LectureList>
                             _classDates.minute,
                             _classDates.second,
                           );
+                          due_time = _toDateString(_classDates);
+                          print("due time $due_time");
                         });
                       });
                     },
@@ -386,7 +428,8 @@ class _LectureListState extends State<LectureList>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
-                    child: Text(AppLocalizations.of(context).translate('timedue_string')),
+                    child: Text(AppLocalizations.of(context)
+                        .translate('timedue_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -405,6 +448,8 @@ class _LectureListState extends State<LectureList>
                             value.hour,
                             value.minute,
                           );
+                          due_alert = _toTimeString(_classDates);
+                          print('Due Alert:$due_alert');
                         });
                       });
                     },
@@ -419,15 +464,19 @@ class _LectureListState extends State<LectureList>
             ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: Text(AppLocalizations.of(context).translate('add_string')),
+                  child: Text(
+                      AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
                     //Send a notification
-                    //TODO Add Assignments
+                    print(new_assignment);
+
+                    //TODO: Fix the assignments dialog to display courses
+                    setState(() {});
                     Assignment current_assignmet = new Assignment(
-                        assignmentName: new_assignment,
+                        assignmentName: my_controller.text,
                         courseId: 'CSCI 3030',
-                        dueAlert: "4:50",
-                        dueDate: "27/09/2018");
+                        dueAlert: due_alert,
+                        dueDate: due_time);
                     _notificationLater(_classDates);
                     _Add_assignment(current_assignmet);
                     _displayAssignmentAddBar(context);
@@ -435,7 +484,8 @@ class _LectureListState extends State<LectureList>
                   },
                 ),
                 FlatButton(
-                  child: Text(AppLocalizations.of(context).translate('cancel_string')),
+                  child: Text(
+                      AppLocalizations.of(context).translate('cancel_string')),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -443,7 +493,7 @@ class _LectureListState extends State<LectureList>
               ],
             )
           ],
-        )));
+        ))));
   }
 
   void completedDialog(BuildContext context) {
@@ -482,12 +532,16 @@ class _LectureListState extends State<LectureList>
   }
 
   _displayClassAddBar(BuildContext context) {
-    final snackBar = SnackBar(content: Text(AppLocalizations.of(context).translate('new_class_added_dialog')));
+    final snackBar = SnackBar(
+        content: Text(
+            AppLocalizations.of(context).translate('new_class_added_dialog')));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   _displayAssignmentAddBar(BuildContext context) {
-    final snackBar = SnackBar(content: Text(AppLocalizations.of(context).translate('new_assignment_added_dialog')));
+    final snackBar = SnackBar(
+        content: Text(AppLocalizations.of(context)
+            .translate('new_assignment_added_dialog')));
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
@@ -508,16 +562,16 @@ class _LectureListState extends State<LectureList>
     _model.completedAssignment(id);
   }
 
-  void _AddLecturetoDB(String new_lecture, String new_code, DateTime date) {
-    print("Add Class $new_lecture  and $new_code to  Database With $date");
-    Course new_course = new Course(courseName: new_lecture,courseCode: new_code,courseDays: date.toString());
-    _class_model.insertCourse(new_course); 
-  }
+  
 
   void _Add_assignment(Assignment assignment) {
     print("Inside add assignment Lecture Page $assignment");
 
     _model.insertAssignment(assignment);
+  }
+
+  Future<List<Course>> _getAllCourses() async {
+    return _lec_model.getAllCourse();
   }
 }
 
@@ -595,7 +649,8 @@ class myhttpWidgetState extends State<myhttpWidget> {
     // TODO: implement build
     return Scaffold(
         appBar: new AppBar(
-          title: Text(AppLocalizations.of(context).translate('ontariotech_string'),
+          title: Text(
+            AppLocalizations.of(context).translate('ontariotech_string'),
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
         ),

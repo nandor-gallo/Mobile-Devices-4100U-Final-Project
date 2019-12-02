@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notetakr/model/note.dart';
 import 'package:notetakr/model/note_model.dart';
-import 'package:path/path.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'AddNote.dart';
 import 'MyNote.dart';
@@ -21,10 +22,27 @@ class MyNotesPage extends StatefulWidget {
 
 class MyNotesPageState extends State<MyNotesPage> {
   String title;
-  List<String> notes = ['note1', 'note2', 'note3', 'note4'];
-
+   RefreshController _refreshController = RefreshController(initialRefresh: false);
   MyNotesPageState(String title) {
     this.title = title;
+  }
+
+
+   void _onRefresh() async{
+    // monitor network fetch
+    // if failed,use refreshFailed()
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    // monitor network fetch
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+       await Future.delayed(Duration(milliseconds: 1000));
+    setState(() {
+
+    });
+    _refreshController.loadComplete();
   }
 
   @override
@@ -37,49 +55,47 @@ class MyNotesPageState extends State<MyNotesPage> {
       appBar: AppBar(
         title: Text(this.title),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.mic),
-            onPressed: () {
-              //TODO: Add Delete Functionality
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              //TODO: Add Speech
-            },
-          )
+          
         ],
       ),
-      body: Container(
-        child: FutureBuilder(
-          future: _getAllNotes(this.title),
-          builder: (context,snapshot) { 
-        if(snapshot.hasData)
-        {
-          List<Note> my_list = snapshot.data;
-          
-          
-        return ListView.builder(
-          itemCount: my_list.length,
-          itemBuilder: (_,int index) 
-          {
-            
-            print('in item builder len of data: ${snapshot.data.length}, index: $index'); 
-            print('in item builder: ${snapshot.data[index]}');
-            return new NoteWidget(context,my_list[index]); 
+      body: Scrollbar(
+      
+      child: SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: true,
+      header: WaterDropMaterialHeader(),
+      footer: CustomFooter(
+        builder: (BuildContext context,LoadStatus mode){
+            Widget body ;
+            if(mode==LoadStatus.idle){
+              body =  Text("pull up load");
+            }
+            else if(mode==LoadStatus.loading){
+              body =  CircularProgressIndicator();
+            }
+            else if(mode == LoadStatus.failed){
+              body = Text("Load Failed!Click retry!");
+            }
+            else if(mode == LoadStatus.canLoading){
+                body = Text("release to load more");
+            }
+            else{
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child:body),
+            );
           },
-        );
-        } 
-        else 
-        {
-          Text('No Notes have been added for this course'); 
-        }     
-          }
-      
-      )
-      
       ),
+      
+      controller: _refreshController,
+      onRefresh: _onRefresh,
+      onLoading: _onLoading,
+      child: MainView(this.title)
+      
+      )),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //TODO: Make add Notes functionality
@@ -92,14 +108,11 @@ class MyNotesPageState extends State<MyNotesPage> {
     );
   }
 
-Future<List<Note>> _getAllNotes(String coursecode) async 
-{
-  
-   var my_notes = await _model.getAllNotesforCourse(coursecode); 
-  
-  return my_notes; 
 
-}
+
+
+
+
 
 
 }
@@ -113,9 +126,29 @@ void _navigatetodescription(BuildContext context, Note s) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => MyNote(s)));
 }
 
-class NoteWidget extends StatelessWidget {
+class NWS extends StatefulWidget{
+  @override
+
+  Note note;
+  BuildContext context; 
+
+   NWS(BuildContext context, Note note) {
+    this.context = context;
+    this.note = note;
+  }
+  
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return NoteWidget(context, note);
+  }
+
+}
+
+
+class NoteWidget extends State<NWS> {
   Note note;
   BuildContext context;
+  final _model = NoteModel();
 
   NoteWidget(BuildContext context, Note note) {
     this.context = context;
@@ -123,17 +156,18 @@ class NoteWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     print('Inside NoteWidget, ${note}'); 
-    return new Card(
+    return new
+    Slidable(
+    actionPane: SlidableDrawerActionPane(),
+    actionExtentRatio: 0.25,
+    child: Card(
       child: InkWell(
         splashColor: Colors.cyan,
         onTap: () {
           _navigatetodescription(context,note);
         },
-        onLongPress: () {
-          _showDeleteDialog(context, note);
-        },
+        
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -153,48 +187,90 @@ class NoteWidget extends StatelessWidget {
           ],
         ),
       ),
+    ),
+    secondaryActions: <Widget>[
+      IconSlideAction(
+      caption: 'Edit',
+      color: Colors.black45,
+      icon: Icons.edit,
+      onTap: () { 
+        print("Edit Pressed"); 
+        //_navigatetoAddNotes(context, course_code)
+        }
+    ),
+    IconSlideAction(
+      caption: 'Delete',
+      color: Colors.red,
+      icon: Icons.delete,
+      onTap: () {
+          print('Delete');
+          _model.deleteNote(this.note);
+          setState() {}
+      } 
+    ),
+    ],
     );
   }
 
-  void _showDeleteDialog(BuildContext context, Note note_name) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return new Dialog(
-            //backgroundColor: Colors.cyan,
-            elevation: 5,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Text("Delete ${note_name.noteName}",
-                      style: TextStyle(color: Colors.cyan, fontSize: 24)),
-                ),
-                ButtonBar(
-                  children: <Widget>[
-                    FlatButton(
-                      child: Text("OK",
-                          style: TextStyle(color: Colors.cyan, fontSize: 18)),
-                      onPressed: () {
-                        //Todo" Create Delete Note 
-                        Navigator.pop(context);
-                      },
-                    ),
-                    FlatButton(
-                      child: Text("Cancel",
-                          style: TextStyle(color: Colors.cyan, fontSize: 18)),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  
+  
 }
+
+
+Future<List<Note>> _getAllNotes(String coursecode) async 
+{
+  
+   var my_notes = await _model.getAllNotesforCourse(coursecode); 
+  
+  return my_notes; 
+
+}
+
+class MainView extends StatelessWidget
+{
+
+  String title;
+
+  MainView(String title)
+  {
+    print(title);
+    this.title = title; 
+  }
+
+
+ @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return FutureBuilder(
+          future: _getAllNotes(this.title),
+          builder: (context,snapshot) { 
+        if(snapshot.hasData)
+        {
+          List<Note> my_list = snapshot.data;
+          
+          
+        return ListView.builder(
+          itemCount: my_list.length,
+          itemBuilder: (_,int index) 
+          {
+            
+            print('in item builder len of data: ${snapshot.data.length}, index: $index'); 
+            print('in item builder: ${snapshot.data[index]}');
+            return new NWS(context,my_list[index]); 
+          },
+        );
+        } 
+        else 
+        {
+          Text('No Notes have been added for this course'); 
+        }     
+          }
+      
+      );
+  }
+  
+}
+
 
 
 

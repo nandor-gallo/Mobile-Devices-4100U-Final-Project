@@ -27,8 +27,8 @@ class NoteModel {
     final db = await DBUtils.init();
     return await db.delete(
       'notes',
-      where: 'courseCode = ? ',
-      whereArgs: [note.courseCode],
+      where: 'id = ? ',
+      whereArgs: [note.id],
     );
   }
 

@@ -69,7 +69,7 @@ class AddNoteState extends State<AddNote> {
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
-              child: TextField(
+              child: TextFormField(
                 decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)
                         .translate('content_string')),

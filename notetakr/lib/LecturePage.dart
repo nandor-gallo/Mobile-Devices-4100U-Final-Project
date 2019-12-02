@@ -230,7 +230,7 @@ class _LectureListState extends State<LectureList>
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: TextField(
+                child: TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText:
@@ -243,7 +243,7 @@ class _LectureListState extends State<LectureList>
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
-              child: TextField(
+              child: TextFormField(
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: AppLocalizations.of(context)
@@ -388,7 +388,7 @@ class _LectureListState extends State<LectureList>
                     style: TextStyle(color: Colors.cyan, fontSize: 15))),
             Padding(
                 padding: const EdgeInsets.all(4),
-                child: TextField(
+                child: TextFormField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: AppLocalizations.of(context)

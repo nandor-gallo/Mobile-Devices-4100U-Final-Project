@@ -48,106 +48,106 @@ class AddNoteState extends State<AddNote> {
     String note_name, note_content;
     // TODO: implement build
     return new Scaffold(
-      appBar: new AppBar(
-        title: Text(AppLocalizations.of(context).translate('add_note_string')),
-      ),
-      body: new SingleChildScrollView( 
-      
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.all(4),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)
-                        .translate('notename_string'),
-                  ),
-                  onChanged: (text) {
-                    note_name = text;
-                  },
-                )),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: TextFormField(
-                decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)
-                        .translate('content_string')),
-                keyboardType: TextInputType.multiline,
-                onChanged: (text_2) {
-                  note_content = text_2;
-                },
-                maxLines: 7,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+        appBar: new AppBar(
+          title:
+              Text(AppLocalizations.of(context).translate('add_note_string')),
+        ),
+        body: new SingleChildScrollView(
+          child: Center(
+            child: Column(
               children: <Widget>[
-                FloatingActionButton(
-                  heroTag: 'Add Button',
-                  child: Icon(Icons.check),
-                  onPressed: () {
-                    print(
-                        "Creating new note with $note_name and content: $note_content");
-                    _save_note_to_db(new Note(
-                        noteName: note_name,
-                        courseCode: this.courseCode,
-                        dateCreated: date,
-                        dateEdited: date,
-                        noteData: note_content));
-                    Navigator.pop(context);
-                  },
+                Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)
+                            .translate('notename_string'),
+                      ),
+                      onChanged: (text) {
+                        note_name = text;
+                      },
+                    )),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)
+                            .translate('content_string')),
+                    keyboardType: TextInputType.multiline,
+                    onChanged: (text_2) {
+                      note_content = text_2;
+                    },
+                    maxLines: 7,
+                  ),
                 ),
-                FloatingActionButton(
-                  heroTag: ' Mic Button',
-                  child: Icon(Icons.mic),
-                  onPressed: () {
-                    _isListening = !_isListening;
-                    if (_isListening && _speechRecognitionAvailable) {
-                      _speech
-                          .listen(locale: 'en_US')
-                          .then((text) => print(text));
-                    }
-                    start();
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return new Dialog(
-                            child: Container(
-                              height: 150,
-                              width: 150,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    iconSize: 40,
-                                    color: Colors.cyan,
-                                    onPressed: () {
-                                      if (_isListening) {
-                                        _speech.stop().then((result) =>
-                                            setState(
-                                                () => _isListening = false));
-                                      }
-                                      _isListening = !_isListening;
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    FloatingActionButton(
+                      heroTag: 'Add Button',
+                      child: Icon(Icons.check),
+                      onPressed: () {
+                        print(
+                            "Creating new note with $note_name and content: $note_content");
+                        _save_note_to_db(new Note(
+                            noteName: note_name,
+                            courseCode: this.courseCode,
+                            dateCreated: date,
+                            dateEdited: date,
+                            noteData: note_content));
+                        Navigator.pop(context);
+                      },
+                    ),
+                    FloatingActionButton(
+                      heroTag: ' Mic Button',
+                      child: Icon(Icons.mic),
+                      onPressed: () {
+                        _isListening = !_isListening;
+                        if (_isListening && _speechRecognitionAvailable) {
+                          _speech
+                              .listen(locale: 'en_US')
+                              .then((text) => print(text));
+                        }
+                        start();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return new Dialog(
+                                child: Container(
+                                  height: 150,
+                                  width: 150,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.cancel),
+                                        iconSize: 40,
+                                        color: Colors.cyan,
+                                        onPressed: () {
+                                          if (_isListening) {
+                                            _speech.stop().then((result) =>
+                                                setState(() =>
+                                                    _isListening = false));
+                                          }
+                                          _isListening = !_isListening;
 
-                                      Navigator.pop(context);
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        });
-                  },
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                    )
+                  ],
                 )
               ],
-            )
-          ],
-        ),
-      ),
-    ));
+            ),
+          ),
+        ));
   }
 
   void start() => _speech

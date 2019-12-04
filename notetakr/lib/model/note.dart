@@ -1,13 +1,11 @@
 class Note {
   Note(
-    {
-      this.id,
+      {this.id,
       this.noteName,
       this.dateCreated,
       this.dateEdited,
       this.courseCode,
-      this.noteData
-    });
+      this.noteData});
 
   int id;
   String noteName;

@@ -1,6 +1,10 @@
-class Assignment{
-  
-  Assignment({this.id, this.assignmentName, this.courseId, this.dueDate, this.dueAlert});
+class Assignment {
+  Assignment(
+      {this.id,
+      this.assignmentName,
+      this.courseId,
+      this.dueDate,
+      this.dueAlert});
 
   int id;
   String assignmentName;
@@ -8,7 +12,7 @@ class Assignment{
   String dueDate;
   String dueAlert;
 
-  Assignment.fromMap(Map<String, dynamic> map){
+  Assignment.fromMap(Map<String, dynamic> map) {
     this.id = map['id'];
     this.assignmentName = map['assignmentName'];
     this.courseId = map['courseId'];
@@ -16,8 +20,8 @@ class Assignment{
     this.dueAlert = map['dueAlert'];
   }
 
-  Map<String,dynamic> toMap(){
-    return{
+  Map<String, dynamic> toMap() {
+    return {
       'id': this.id,
       'assignmentName': this.assignmentName,
       'courseId': this.courseId,

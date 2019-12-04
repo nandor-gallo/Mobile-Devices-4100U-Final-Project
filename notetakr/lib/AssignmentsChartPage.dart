@@ -5,24 +5,22 @@ import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
 import 'app_localizations.dart';
 
- class AssignmentChartsPage extends StatefulWidget {
+class AssignmentChartsPage extends StatefulWidget {
   @override
-   State<StatefulWidget> createState() {
+  State<StatefulWidget> createState() {
     // TODO: implement createState
-     return AssignmentChartState();
-   }
- }
+    return AssignmentChartState();
+  }
+}
 
- class AssignmentChartState extends State<AssignmentChartsPage> {
+class AssignmentChartState extends State<AssignmentChartsPage> {
   final _model = AssignmentModel();
   List<Assignment> my_list;
-  List<Assignment> selected_list; 
+  List<Assignment> selected_list;
 
-
- /// Create one series with sample hard coded data.
- List<charts.Series<AssignmentSeries, int>> _createSampleData(List<AssignmentSeries> data) {
-    
-
+  /// Create one series with sample hard coded data.
+  List<charts.Series<AssignmentSeries, int>> _createSampleData(
+      List<AssignmentSeries> data) {
     return [
       new charts.Series<AssignmentSeries, int>(
         id: 'Sales',
@@ -33,112 +31,96 @@ import 'app_localizations.dart';
       )
     ];
   }
-   @override
-   void setState(fn) {
-     // TODO: implement setState
-     super.setState(fn);
-   }
 
-   @override
-   Widget build(BuildContext context) {
-     // TODO: implement build
-     return FutureBuilder(
-         future: _getAllAssignments(),
-         builder: (context, snapshot) {
-           if (snapshot.hasData) {
-             //var my_map = getAssignmentFreq(snapshot.data);
-              my_list = snapshot.data;
-              //var series = getAssignmentSeries(my_list);
-             return SingleChildScrollView(
-             child: Column(
-                children:<Widget> [
-                SingleChildScrollView(
+  @override
+  void setState(fn) {
+    // TODO: implement setState
+    super.setState(fn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return FutureBuilder(
+        future: _getAllAssignments(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            //var my_map = getAssignmentFreq(snapshot.data);
+            my_list = snapshot.data;
+            //var series = getAssignmentSeries(my_list);
+            return SingleChildScrollView(
+                child: Column(children: <Widget>[
+              SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: DataTable(
                     columns: [
-                    DataColumn(
-                      label: Text(AppLocalizations.of(context).translate('assign_name_string')),
-                      numeric: false,
-                    ),
-                    DataColumn(
-                      label:Text(AppLocalizations.of(context).translate('duedate_string')),
-                      numeric: false,
-                    )
-                    ],
-                    
-                    rows:  
-                  
-                    my_list.map(
-                      (item) => DataRow(
-                        cells: [
-                          DataCell(
-                            Text(item.assignmentName)
-                          ),
-                          DataCell(
-                            Text(item.dueDate),
-                          )
-                        ]
+                      DataColumn(
+                        label: Text(AppLocalizations.of(context)
+                            .translate('assign_name_string')),
+                        numeric: false,
+                      ),
+                      DataColumn(
+                        label: Text(AppLocalizations.of(context)
+                            .translate('duedate_string')),
+                        numeric: false,
                       )
-                    ).toList(),
-                    
-                    
-                  )
+                    ],
+                    rows: my_list
+                        .map((item) => DataRow(cells: [
+                              DataCell(Text(item.assignmentName)),
+                              DataCell(
+                                Text(item.dueDate),
+                              )
+                            ]))
+                        .toList(),
+                  )),
+              Container(
+                  padding: EdgeInsets.all(4),
+                  child: SizedBox(
+                      width: 300,
+                      height: 200,
+                      child: charts.LineChart(
+                        _createSampleData(_getAssignmentSeries(snapshot.data)),
+                        animate: false,
+                      )))
+            ]));
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
+  }
 
-                ),
-                Container(
-                padding: EdgeInsets.all(4),
-                child: SizedBox(
-                width: 300,
-                height: 200,
-                child: charts.LineChart(_createSampleData(_getAssignmentSeries(snapshot.data)),animate: false,)
-                )
-                
-                )
-                ]
-             ));
-           } else {
-             return CircularProgressIndicator();
-           }
-         });
-   }
+  Future<List<Assignment>> _getAllAssignments() async {
+    List<Assignment> my_list = await _model.getAllAssignments();
+    my_list.forEach((item) => print('inside for each $item'));
+    return my_list;
+  }
+}
 
-   Future<List<Assignment>> _getAllAssignments() async {
-     List<Assignment> my_list = await _model.getAllAssignments();
-     my_list.forEach((item) => print('inside for each $item'));
-     return my_list;
-   }
- }
-
- Map<String, int> getAssignmentFreq(List<Assignment> mylist) {
-   Map<String, int> my_map = new Map();
- mylist.forEach((item) => {
-         if (my_map.containsKey(item.dueDate))
-           {my_map[item.dueDate] += 1}
-         else
+Map<String, int> getAssignmentFreq(List<Assignment> mylist) {
+  Map<String, int> my_map = new Map();
+  mylist.forEach((item) => {
+        if (my_map.containsKey(item.dueDate))
+          {my_map[item.dueDate] += 1}
+        else
           {my_map[item.dueDate] = 1}
-       });
+      });
 
-   return my_map;
- }
+  return my_map;
+}
 
- List<AssignmentSeries> _getAssignmentSeries(List<Assignment> my_list)
- {
-    List<AssignmentSeries> output = new List();
-    int id = 0;
-    var dict = getAssignmentFreq(my_list);
-    dict.forEach((k,v)=> {
-      output.add(new AssignmentSeries(id,k, v)),
-      id+=1
-    });
-    return output;
-
- }
-
+List<AssignmentSeries> _getAssignmentSeries(List<Assignment> my_list) {
+  List<AssignmentSeries> output = new List();
+  int id = 0;
+  var dict = getAssignmentFreq(my_list);
+  dict.forEach((k, v) => {output.add(new AssignmentSeries(id, k, v)), id += 1});
+  return output;
+}
 
 class AssignmentSeries {
   int series_id;
   final String date;
   final int count;
 
-  AssignmentSeries(this.series_id,this.date, this.count);
+  AssignmentSeries(this.series_id, this.date, this.count);
 }

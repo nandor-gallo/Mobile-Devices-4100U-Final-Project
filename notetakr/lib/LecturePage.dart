@@ -97,17 +97,16 @@ class _LectureListState extends State<LectureList>
                       future: _lec_model.getAllCourse(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                         my_list = snapshot.data; 
-                         return  GridView.count(
+                          my_list = snapshot.data;
+                          return GridView.count(
                               primary: true,
                               crossAxisCount: 4,
-                              children: ( my_list
+                              children: (my_list
                                   .map((lecture) =>
-                                      new LectureWidget(this.context,lecture))
+                                      new LectureWidget(this.context, lecture))
                                   .toList()));
-                          
                         } else {
-                          return new Center (child:Text("Please Add Courses"));
+                          return new Center(child: Text("Please Add Courses"));
                         }
                       })),
               Tab(child: AssignmentChartsPage()),
@@ -196,22 +195,19 @@ class _LectureListState extends State<LectureList>
   Dialog _AddCourseDialog() {
     var new_lecture;
     var new_code;
-    
+
     DateTime now = DateTime.now();
-    String class_time = _toTimeString(now); 
+    String class_time = _toTimeString(now);
     String class_day = _toDateString(now);
     final my_controller_1 = TextEditingController();
     final my_controller_2 = TextEditingController();
 
-    
     Future<void> _AddLecturetoDB(Course course) async {
       print('Inside Add lecture to DB $course');
-       if(course.courseName==null) 
-       {
-         print('Course input is null'); 
-         return; 
-       }
-
+      if (course.courseName == null) {
+        print('Course input is null');
+        return;
+      }
 
       _lec_model.insertCourse(course);
     }
@@ -251,7 +247,7 @@ class _LectureListState extends State<LectureList>
                 onChanged: (code) {
                   new_code = code;
                 },
-              controller: my_controller_2,
+                controller: my_controller_2,
               ),
             ),
             Padding(
@@ -336,11 +332,10 @@ class _LectureListState extends State<LectureList>
                   onPressed: () {
                     Course course;
                     course = new Course(
-                        courseName: new_lecture,
-                        courseCode: new_code,
-                        courseDays: _toDateString(_classDates),
-                        courseTime: _toTimeString(_classDates),
-
+                      courseName: new_lecture,
+                      courseCode: new_code,
+                      courseDays: _toDateString(_classDates),
+                      courseTime: _toTimeString(_classDates),
                     );
                     print("Inside add course dialog $course");
                     _AddLecturetoDB(course);
@@ -598,65 +593,54 @@ class LectureWidget extends StatelessWidget {
   Course title;
   BuildContext context;
   final _model = CourseModel();
-  
+
   LectureWidget(context, Course title) {
     this.context = context;
     this.title = title;
   }
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector( 
-    onLongPress: () 
-    {
-      
-    showDialog(
-      context: context,
-      builder: (BuildContext context)
-      {
-        return AlertDialog(
-          title: Text("Delete ${title.courseName}"),
-          actions: <Widget>[
-            new FlatButton(
-              child: Text("Cancel"),
-              onPressed: () 
-              {
-                Navigator.pop(context);
-              },
-            ),
-            new FlatButton(
-              child: Text('Delete'),
-              onPressed: ()
-              {
-                _model.deleteCourse(this.title);
-                setState(){
-
-                }
-                Navigator.pop(context);
-              },
-            )
-          ],
-        );
-      }
-    );
-    },
-    child: Card(
-        color: Colors.blueAccent,
-        child: InkWell(
-            splashColor: Colors.blue,
-            onTap: () {
-              print('Card tapped.');
-              _navigatetoAddPage(context, this.title.courseName);
-            },
-            child: Container(
-              width: 300,
-              height: 100,
-              child: Center(
-                child: Text(this.title.courseName),
-              ),
-            ))
-          
-            
-            ));
+    return new GestureDetector(
+        onLongPress: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Delete ${title.courseName}"),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    new FlatButton(
+                      child: Text('Delete'),
+                      onPressed: () {
+                        _model.deleteCourse(this.title);
+                        setState() {}
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                );
+              });
+        },
+        child: Card(
+            color: Colors.blueAccent,
+            child: InkWell(
+                splashColor: Colors.blue,
+                onTap: () {
+                  print('Card tapped.');
+                  _navigatetoAddPage(context, this.title.courseName);
+                },
+                child: Container(
+                  width: 300,
+                  height: 100,
+                  child: Center(
+                    child: Text(this.title.courseName),
+                  ),
+                ))));
   }
 
   void _navigatetoAddPage(context, String lecture) {

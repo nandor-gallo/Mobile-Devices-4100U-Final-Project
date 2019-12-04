@@ -8,8 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'AddNote.dart';
 import 'MyNote.dart';
 
-final _model = NoteModel(); 
-
+final _model = NoteModel();
 
 class MyNotesPage extends StatefulWidget {
   String title;
@@ -22,26 +21,24 @@ class MyNotesPage extends StatefulWidget {
 
 class MyNotesPageState extends State<MyNotesPage> {
   String title;
-   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   MyNotesPageState(String title) {
     this.title = title;
   }
 
-
-   void _onRefresh() async{
+  void _onRefresh() async {
     // monitor network fetch
     // if failed,use refreshFailed()
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     // monitor network fetch
     // if failed,use loadFailed(),if no data return,use LoadNodata()
-       await Future.delayed(Duration(milliseconds: 1000));
-    setState(() {
-
-    });
+    await Future.delayed(Duration(milliseconds: 1000));
+    setState(() {});
     _refreshController.loadComplete();
   }
 
@@ -54,96 +51,74 @@ class MyNotesPageState extends State<MyNotesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(this.title),
-        actions: <Widget>[
-          
-        ],
+        actions: <Widget>[],
       ),
       body: Scrollbar(
-      
-      child: SmartRefresher(
-      enablePullDown: true,
-      enablePullUp: true,
-      header: WaterDropMaterialHeader(),
-      footer: CustomFooter(
-        builder: (BuildContext context,LoadStatus mode){
-            Widget body ;
-            if(mode==LoadStatus.idle){
-              body =  Text("pull up load");
-            }
-            else if(mode==LoadStatus.loading){
-              body =  CircularProgressIndicator();
-            }
-            else if(mode == LoadStatus.failed){
-              body = Text("Load Failed!Click retry!");
-            }
-            else if(mode == LoadStatus.canLoading){
-                body = Text("release to load more");
-            }
-            else{
-              body = Text("No more Data");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child:body),
-            );
-          },
-      ),
-      
-      controller: _refreshController,
-      onRefresh: _onRefresh,
-      onLoading: _onLoading,
-      child: MainView(this.title)
-      
-      )),
-      
+          child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: WaterDropMaterialHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull up load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = CircularProgressIndicator();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed!Click retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: MainView(this.title))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //TODO: Make add Notes functionality
           print("Include Add Notes Functionality");
-          _navigatetoAddNotes(context,title);
+          _navigatetoAddNotes(context, title);
           Scaffold.of(this.context).showSnackBar(addSnackbar);
         },
         child: Icon(Icons.add),
       ),
     );
   }
-
-
-
-
-
-
-
-
 }
 
-void _navigatetoAddNotes(BuildContext context,String course_code)
-{
-  Navigator.push(context, MaterialPageRoute(builder: (context) => AddNote(course_code) ));
+void _navigatetoAddNotes(BuildContext context, String course_code) {
+  Navigator.push(
+      context, MaterialPageRoute(builder: (context) => AddNote(course_code)));
 }
 
 void _navigatetodescription(BuildContext context, Note s) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => MyNote(s)));
 }
 
-class NWS extends StatefulWidget{
+class NWS extends StatefulWidget {
   @override
-
   Note note;
-  BuildContext context; 
+  BuildContext context;
 
-   NWS(BuildContext context, Note note) {
+  NWS(BuildContext context, Note note) {
     this.context = context;
     this.note = note;
   }
-  
+
   State<StatefulWidget> createState() {
     // TODO: implement createState
     return NoteWidget(context, note);
   }
-
 }
-
 
 class NoteWidget extends State<NWS> {
   Note note;
@@ -156,121 +131,94 @@ class NoteWidget extends State<NWS> {
   }
   @override
   Widget build(BuildContext context) {
-    print('Inside NoteWidget, ${note}'); 
-    return new
-    Slidable(
-    actionPane: SlidableDrawerActionPane(),
-    actionExtentRatio: 0.25,
-    child: Card(
-      child: InkWell(
-        splashColor: Colors.cyan,
-        onTap: () {
-          _navigatetodescription(context,note);
-        },
-        
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: Text(
-                note.noteName, 
-                style: TextStyle(color: Colors.black, fontSize: 30),
-              ),
-            ),
-            Padding(
+    print('Inside NoteWidget, ${note}');
+    return new Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: Card(
+        child: InkWell(
+          splashColor: Colors.cyan,
+          onTap: () {
+            _navigatetodescription(context, note);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
                 padding: const EdgeInsets.all(4),
                 child: Text(
-                  note.dateCreated,
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                )),
-          ],
+                  note.noteName,
+                  style: TextStyle(color: Colors.black, fontSize: 30),
+                ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    note.dateCreated,
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  )),
+            ],
+          ),
         ),
       ),
-    ),
-    secondaryActions: <Widget>[
-      IconSlideAction(
-      caption: 'Edit',
-      color: Colors.black45,
-      icon: Icons.edit,
-      onTap: () { 
-        print("Edit Pressed"); 
-        //_navigatetoAddNotes(context, course_code)
-        }
-    ),
-    IconSlideAction(
-      caption: 'Delete',
-      color: Colors.red,
-      icon: Icons.delete,
-      onTap: () {
-          print('Delete');
-          _model.deleteNote(this.note);
-          setState() {}
-      } 
-    ),
-    ],
+      secondaryActions: <Widget>[
+        IconSlideAction(
+            caption: 'Edit',
+            color: Colors.black45,
+            icon: Icons.edit,
+            onTap: () {
+              print("Edit Pressed");
+              //_navigatetoAddNotes(context, course_code)
+            }),
+        IconSlideAction(
+            caption: 'Delete',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () {
+              print('Delete');
+              _model.deleteNote(this.note);
+              setState() {}
+            }),
+      ],
     );
   }
-
-  
-  
 }
 
+Future<List<Note>> _getAllNotes(String coursecode) async {
+  var my_notes = await _model.getAllNotesforCourse(coursecode);
 
-Future<List<Note>> _getAllNotes(String coursecode) async 
-{
-  
-   var my_notes = await _model.getAllNotesforCourse(coursecode); 
-  
-  return my_notes; 
-
+  return my_notes;
 }
 
-class MainView extends StatelessWidget
-{
-
+class MainView extends StatelessWidget {
   String title;
 
-  MainView(String title)
-  {
+  MainView(String title) {
     print(title);
-    this.title = title; 
+    this.title = title;
   }
 
-
- @override
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return FutureBuilder(
-          future: _getAllNotes(this.title),
-          builder: (context,snapshot) { 
-        if(snapshot.hasData)
-        {
-          List<Note> my_list = snapshot.data;
-          
-          
-        return ListView.builder(
-          itemCount: my_list.length,
-          itemBuilder: (_,int index) 
-          {
-            
-            print('in item builder len of data: ${snapshot.data.length}, index: $index'); 
-            print('in item builder: ${snapshot.data[index]}');
-            return new NWS(context,my_list[index]); 
-          },
-        );
-        } 
-        else 
-        {
-          Text('No Notes have been added for this course'); 
-        }     
+        future: _getAllNotes(this.title),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Note> my_list = snapshot.data;
+
+            return ListView.builder(
+              itemCount: my_list.length,
+              itemBuilder: (_, int index) {
+                print(
+                    'in item builder len of data: ${snapshot.data.length}, index: $index');
+                print('in item builder: ${snapshot.data[index]}');
+                return new NWS(context, my_list[index]);
+              },
+            );
+          } else {
+            Text('No Notes have been added for this course');
           }
-      
-      );
+        });
   }
-  
 }
-
-
-
-

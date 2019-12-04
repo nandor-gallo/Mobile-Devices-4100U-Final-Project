@@ -5,33 +5,46 @@ import 'package:speech_recognition/speech_recognition.dart';
 import 'app_localizations.dart';
 import 'model/note.dart';
 
-final _model = NoteModel();
 
 class AddNote extends StatefulWidget {
-  final _model = NoteModel();
 
   String courseCode;
+  bool edit = false;
+  Note note;
 
-  AddNote(String courseCode) {
+  AddNote(String courseCode, {note,edit=false} ) {
     this.courseCode = courseCode;
+    if(edit)
+    {
+      this.edit=edit;
+      this.note = note;
+    }
   }
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return AddNoteState(this.courseCode);
+    return AddNoteState(this.courseCode,note:this.note,edit:this.edit);
   }
 }
 
 class AddNoteState extends State<AddNote> {
+  final _model = NoteModel();
+
   bool _isListening = false;
   bool _speechRecognitionAvailable = false;
+  bool _edit = false;
   SpeechRecognition _speech;
   String courseCode;
   String transcription = "";
+  Note _note;
 
-  AddNoteState(String courseCode) {
+  AddNoteState(String courseCode, {note,edit}) {
     this.courseCode = courseCode;
+    if(edit){
+    this._edit = edit;
+    this._note = note;
+    }
   }
 
   @override
@@ -45,8 +58,19 @@ class AddNoteState extends State<AddNote> {
   Widget build(BuildContext context) {
     DateTime now = new DateTime.now();
     String date = new DateTime(now.year, now.month, now.day).toString();
-    String note_name, note_content;
-    // TODO: implement build
+    if(_note==null)
+    {
+      _note = new Note();
+      _note.courseCode = this.courseCode;
+      _note.dateEdited = date;
+      _note.dateCreated = date;
+    }
+    
+  Future<void> _save_note_to_db(Note note) async {
+  print('Inserting new note $note');
+  _model.insertNote(note);
+
+  }
     return new Scaffold(
         appBar: new AppBar(
           title:
@@ -59,42 +83,40 @@ class AddNoteState extends State<AddNote> {
                 Padding(
                     padding: const EdgeInsets.all(4),
                     child: TextFormField(
+                      initialValue: _note.noteName,
                       decoration: InputDecoration(
                         hintText: AppLocalizations.of(context)
                             .translate('notename_string'),
                       ),
                       onChanged: (text) {
-                        note_name = text;
+                        _note.noteName = text;
                       },
                     )),
                 Padding(
                   padding: const EdgeInsets.all(4),
                   child: TextFormField(
+                    initialValue: _note.noteData,
                     decoration: InputDecoration(
                         hintText: AppLocalizations.of(context)
                             .translate('content_string')),
                     keyboardType: TextInputType.multiline,
                     onChanged: (text_2) {
-                      note_content = text_2;
+                      _note.noteData = text_2;
                     },
-                    maxLines: 7,
+                    maxLines: 11,
                   ),
                 ),
-                Row(
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child:Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     FloatingActionButton(
                       heroTag: 'Add Button',
                       child: Icon(Icons.check),
                       onPressed: () {
-                        print(
-                            "Creating new note with $note_name and content: $note_content");
-                        _save_note_to_db(new Note(
-                            noteName: note_name,
-                            courseCode: this.courseCode,
-                            dateCreated: date,
-                            dateEdited: date,
-                            noteData: note_content));
+                        print("Creating new note with $_note");
+                        _save_note_to_db(_note);
                         Navigator.pop(context);
                       },
                     ),
@@ -143,12 +165,20 @@ class AddNoteState extends State<AddNote> {
                       },
                     )
                   ],
-                )
+                ))
               ],
             ),
           ),
         ));
-  }
+ 
+ 
+ 
+}
+
+ 
+ 
+ 
+  
 
   void start() => _speech
       .listen(locale: 'en_US')
@@ -194,10 +224,6 @@ class AddNoteState extends State<AddNote> {
   }
 }
 
-Future<void> _save_note_to_db(Note note) async {
-  print('Inserting new note $note');
-  _model.insertNote(note);
-}
 
 class Language {
   final String name;

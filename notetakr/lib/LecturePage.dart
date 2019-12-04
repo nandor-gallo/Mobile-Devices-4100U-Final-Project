@@ -31,7 +31,7 @@ class _LectureListState extends State<LectureList>
     with SingleTickerProviderStateMixin {
   final _model = AssignmentModel();
   final _class_model = CourseModel();
-
+  var _course; 
   List<Course> my_list;
   final _lec_model = CourseModel();
   TabController _tabController;
@@ -59,7 +59,6 @@ class _LectureListState extends State<LectureList>
     _tabController = TabController(vsync: this, length: 2);
   }
 
-  DateTime _classDates = DateTime.now();
   var _notifications = Notifications();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -97,16 +96,17 @@ class _LectureListState extends State<LectureList>
                       future: _lec_model.getAllCourse(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          my_list = snapshot.data;
-                          return GridView.count(
+                         my_list = snapshot.data; 
+                         return  GridView.count(
                               primary: true,
                               crossAxisCount: 4,
-                              children: (my_list
+                              children: ( my_list
                                   .map((lecture) =>
-                                      new LectureWidget(this.context, lecture))
+                                      new LectureWidget(this.context,lecture))
                                   .toList()));
+                          
                         } else {
-                          return new Center(child: Text("Please Add Courses"));
+                          return new Center (child:Text("Please Add Courses"));
                         }
                       })),
               Tab(child: AssignmentChartsPage()),
@@ -193,108 +193,75 @@ class _LectureListState extends State<LectureList>
   }
 
   Dialog _AddCourseDialog() {
-    var new_lecture;
-    var new_code;
-
+   
     DateTime now = DateTime.now();
-    String class_time = _toTimeString(now);
-    String class_day = _toDateString(now);
-    final my_controller_1 = TextEditingController();
-    final my_controller_2 = TextEditingController();
-
+    DateTime _classDates;
+    print("Initial value:$_course");
+    if(_course==null)
+    {
+      _course = new Course();  
+      DateTime _classDates = now;
+    }
+    _course.courseTime = _toTimeString(now);
+  
+    _course.courseDays = "Mon:Wed"; 
+    List<String> drop_vales = ["Mon",'Thu'];
+    TextEditingController my_controller = new TextEditingController();
     Future<void> _AddLecturetoDB(Course course) async {
       print('Inside Add lecture to DB $course');
-      if (course.courseName == null) {
-        print('Course input is null');
-        return;
-      }
+       if(course.courseName==null) 
+       {
+         print('Course input is null'); 
+         return; 
+       }
+
 
       _lec_model.insertCourse(course);
     }
 
     return new Dialog(
-        backgroundColor: Colors.cyan,
-        child: SingleChildScrollView(
-            child: Card(
-                child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.all(4),
-                child: Text(
-                    AppLocalizations.of(context).translate('add_class_string'),
-                    style: TextStyle(color: Colors.cyan, fontSize: 15))),
-            Padding(
-                padding: const EdgeInsets.all(4),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText:
-                        AppLocalizations.of(context).translate('class_string'),
-                  ),
-                  onChanged: (text) {
-                    new_lecture = text;
-                  },
-                  controller: my_controller_1,
-                )),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: TextFormField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: AppLocalizations.of(context)
-                        .translate('course_string')),
-                onChanged: (code) {
-                  new_code = code;
-                },
-                controller: my_controller_2,
-              ),
+      backgroundColor: Colors.cyan,
+      child: SingleChildScrollView(
+      
+      child: Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Center(
+          
+            child: Text("Add a course",style: TextStyle(color: Colors.cyan, fontStyle: FontStyle.italic),)
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: TextFormField(
+              decoration: InputDecoration(hintText: "Course Name"),
+              initialValue: _course.courseName,
+              onChanged: (text)  {
+                _course.courseName = text; 
+              },
+              //controller: my_controller,
             ),
-            Padding(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(0.4),
+             child: TextFormField(
+              decoration: InputDecoration(hintText: "Course Code"),
+              initialValue: _course.courseCode,
+              onChanged: (text)  {
+                _course.courseCode = text; 
+              },
+              
+            ),
+          ),
+
+          Padding(
               padding: const EdgeInsets.all(4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   RaisedButton(
                     child: Text(AppLocalizations.of(context)
-                        .translate('coursedays_string')),
-                    color: Colors.cyan,
-                    textColor: Colors.black,
-                    onPressed: () {
-                      showDatePicker(
-                        context: context,
-                        firstDate: now,
-                        lastDate: DateTime(2100),
-                        initialDate: now,
-                      ).then((value) {
-                        setState(() {
-                          _classDates = DateTime(
-                            value.year,
-                            value.month,
-                            value.day,
-                            _classDates.hour,
-                            _classDates.minute,
-                            _classDates.second,
-                          );
-                        });
-                      });
-                    },
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(_toDateString(_classDates)),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  RaisedButton(
-                    child: Text(AppLocalizations.of(context)
-                        .translate('coursetime_string')),
+                        .translate('timedue_string')),
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
@@ -313,59 +280,138 @@ class _LectureListState extends State<LectureList>
                             value.hour,
                             value.minute,
                           );
+                          _course.courseTime = _toTimeString(_classDates);
                         });
                       });
                     },
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(_toTimeString(_classDates)),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child:  Text(_course.courseTime),
+
                   ),
-                ],
-              ),
+        ],
+      ),
+      
+      
+      ),
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          children: <Widget>[
+            Text("Course days: "),
+           DropdownButton<String>(
+          value: drop_vales[0],
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(
+          color: Colors.blue
+        ),
+        underline: Container(
+          height: 2,
+          color: Colors.blueAccent,
+        ),
+        onChanged: (String newValue) {
+          setState(() {
+            
+            drop_vales[0]=newValue;
+            
+            _course.courseDays = drop_vales.toString();
+          
+            print(_course.courseDays);
+
+          });
+        },
+        items: <String>['Mon', 'Wed', 'Tue', 'Thu','Fri']
+          .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          })
+          .toList(),
+
+          
+      ),
+      //Drop down button for second Course days.
+      DropdownButton<String>(
+          value: drop_vales[1],
+        icon: Icon(Icons.arrow_downward),
+        iconSize: 24,
+        elevation: 16,
+        style: TextStyle(
+          color: Colors.blue
+        ),
+        underline: Container(
+          height: 2,
+          color: Colors.blueAccent,
+        ),
+        onChanged: (String newValue) {
+          setState(() {
+             
+            drop_vales[1]=newValue;
+            _course.courseDays = drop_vales[1].toString();
+            print(_course.courseDays);
+
+          });
+        },
+        items: <String>['Mon', 'Wed', 'Tue', 'Thu','Fri']
+          .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          })
+          .toList(),
+      ), 
+           ] ),
+      ),
+        ButtonBar(
+          children: <Widget>[
+            RaisedButton(
+              color: Colors.cyan,
+              child: Text("Cancel"),
+              onPressed: () 
+              {
+                Navigator.pop(context);
+              },
             ),
-            ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text(
-                      AppLocalizations.of(context).translate('add_string')),
-                  onPressed: () {
-                    Course course;
-                    course = new Course(
-                      courseName: new_lecture,
-                      courseCode: new_code,
-                      courseDays: _toDateString(_classDates),
-                      courseTime: _toTimeString(_classDates),
-                    );
-                    print("Inside add course dialog $course");
-                    _AddLecturetoDB(course);
-                    print("$new_lecture (end of lec), $new_code (end of code)");
-                    //Send a notification
-                    _notificationLater(_classDates);
-                    //Display Snack Bar
-                    _displayClassAddBar(context);
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: Text(
-                      AppLocalizations.of(context).translate('cancel_string')),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
+            RaisedButton(
+              color: Colors.cyan,
+              child: Text("Ok"),
+              onPressed: () 
+              {
+                print("Inside on pressed:$_course");
+                print("Inside on pressed:${my_controller.toString()}");
+                _AddLecturetoDB(_course);
+                Navigator.pop(context);
+              },
             )
           ],
-        ))));
+        )
+           ] ))));
+      
+      
+      
+
+      
+  
+  
+  
   }
 
   Dialog _AddAssignmentDialog() {
     DateTime now = DateTime.now();
-    String new_assignment = "";
-    String due_alert = _toTimeString(now);
-    String due_time = _toDateString(now);
-    final my_controller = TextEditingController();
+    Assignment _assign;
+    if(_assign==null){
+    _assign = new Assignment(); 
+    }
+    _assign.dueDate = _toDateString(now);
+    _assign.dueAlert = _toTimeString(now); 
+     DateTime _classDates = DateTime.now();
+
+
 
     return new Dialog(
         //Dialog for adding assignmment
@@ -384,15 +430,16 @@ class _LectureListState extends State<LectureList>
             Padding(
                 padding: const EdgeInsets.all(4),
                 child: TextFormField(
+                  initialValue: _assign.assignmentName,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: AppLocalizations.of(context)
                         .translate('assign_title_string'),
                   ),
                   onChanged: (text) {
-                    new_assignment = text;
+                    _assign.assignmentName = text;
                   },
-                  controller: my_controller,
+                  
                 )),
             Padding(
               padding: const EdgeInsets.all(4),
@@ -405,6 +452,7 @@ class _LectureListState extends State<LectureList>
                     color: Colors.cyan,
                     textColor: Colors.black,
                     onPressed: () {
+
                       showDatePicker(
                         context: context,
                         firstDate: now,
@@ -420,15 +468,14 @@ class _LectureListState extends State<LectureList>
                             _classDates.minute,
                             _classDates.second,
                           );
-                          due_time = _toDateString(_classDates);
-                          print("due time $due_time");
+                          _assign.dueDate = _toDateString(_classDates);
                         });
                       });
                     },
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: new Text(_toDateString(_classDates)),
+                    child: new Text(_assign.dueDate),
                   ),
                 ],
               ),
@@ -459,15 +506,15 @@ class _LectureListState extends State<LectureList>
                             value.hour,
                             value.minute,
                           );
-                          due_alert = _toTimeString(_classDates);
-                          print('Due Alert:$due_alert');
+                          _assign.dueAlert = _toTimeString(_classDates);
+                        
                         });
                       });
                     },
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(_toTimeString(_classDates)),
+                    child: Text(_assign.dueAlert),
                   ),
                 ],
               ),
@@ -479,17 +526,19 @@ class _LectureListState extends State<LectureList>
                       AppLocalizations.of(context).translate('add_string')),
                   onPressed: () {
                     //Send a notification
-                    print(new_assignment);
+                    _assign.courseId = "CSCI 2100";
 
                     //TODO: Fix the assignments dialog to display courses
-                    setState(() {});
-                    Assignment current_assignmet = new Assignment(
-                        assignmentName: my_controller.text,
-                        courseId: 'CSCI 3030',
-                        dueAlert: due_alert,
-                        dueDate: due_time);
+                    print('Inside on Pressed add assignment: $_assign'); 
                     _notificationLater(_classDates);
-                    _Add_assignment(current_assignmet);
+                    if(_assign.assignmentName!=null)
+                   { 
+                     _Add_assignment(_assign); 
+                     
+                     }
+                     else{
+                       print("Null assignment");
+                     }
                     _displayAssignmentAddBar(context);
                     Navigator.pop(context);
                   },
@@ -593,54 +642,65 @@ class LectureWidget extends StatelessWidget {
   Course title;
   BuildContext context;
   final _model = CourseModel();
-
+  
   LectureWidget(context, Course title) {
     this.context = context;
     this.title = title;
   }
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
-        onLongPress: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Delete ${title.courseName}"),
-                  actions: <Widget>[
-                    new FlatButton(
-                      child: Text("Cancel"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    new FlatButton(
-                      child: Text('Delete'),
-                      onPressed: () {
-                        _model.deleteCourse(this.title);
-                        setState() {}
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                );
-              });
-        },
-        child: Card(
-            color: Colors.blueAccent,
-            child: InkWell(
-                splashColor: Colors.blue,
-                onTap: () {
-                  print('Card tapped.');
-                  _navigatetoAddPage(context, this.title.courseName);
-                },
-                child: Container(
-                  width: 300,
-                  height: 100,
-                  child: Center(
-                    child: Text(this.title.courseName),
-                  ),
-                ))));
+    return new GestureDetector( 
+    onLongPress: () 
+    {
+      
+    showDialog(
+      context: context,
+      builder: (BuildContext context)
+      {
+        return AlertDialog(
+          title: Text("Delete ${title.courseName}"),
+          actions: <Widget>[
+            new FlatButton(
+              child: Text("Cancel"),
+              onPressed: () 
+              {
+                Navigator.pop(context);
+              },
+            ),
+            new FlatButton(
+              child: Text('Delete'),
+              onPressed: ()
+              {
+                _model.deleteCourse(this.title);
+                setState(){
+
+                }
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      }
+    );
+    },
+    child: Card(
+        color: Colors.blueAccent,
+        child: InkWell(
+            splashColor: Colors.blue,
+            onTap: () {
+              print('Card tapped.');
+              _navigatetoAddPage(context, this.title.courseName);
+            },
+            child: Container(
+              width: 300,
+              height: 100,
+              child: Center(
+                child: Text(this.title.courseName),
+              ),
+            ))
+          
+            
+            ));
   }
 
   void _navigatetoAddPage(context, String lecture) {

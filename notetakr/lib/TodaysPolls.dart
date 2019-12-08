@@ -36,7 +36,8 @@ class TodaysPollsState extends State<TodaysPollsPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.orange,
-          title: Text(AppLocalizations.of(context).translate('faveprof_string'),
+          title: Text(
+            AppLocalizations.of(context).translate('faveprof_string'),
             textScaleFactor: 0.75,
           )),
       body: _buildBody(context),
@@ -81,7 +82,8 @@ class TodaysPollsState extends State<TodaysPollsPage> {
                 : Text(""),
             onTap: () {
               if (!isVoted) {
-                pollresults.reference.updateData({'votes': FieldValue.increment(1)});
+                pollresults.reference
+                    .updateData({'votes': FieldValue.increment(1)});
                 isVoted = true;
               }
             }),

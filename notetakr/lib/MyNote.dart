@@ -16,14 +16,8 @@ class MyNote extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(note.noteName),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              _navigateToAddNotes(note);
-            },
-          )
-        ],
+      
+       
       ),
       body: Column(
         children: <Widget>[
@@ -44,7 +38,4 @@ class MyNote extends StatelessWidget {
     );
   }
 
-  void _navigateToAddNotes(Note note) {
-    //TODO;
-  }
 }

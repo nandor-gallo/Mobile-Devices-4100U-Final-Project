@@ -6,170 +6,179 @@ import 'app_localizations.dart';
 import 'model/note.dart';
 
 
+class AddNote extends StatefulWidget {
 
-final _model = NoteModel();
+  String courseCode;
+  bool edit = false;
+  Note note;
 
-class AddNote extends StatefulWidget{
-  final _model = NoteModel();
-
-  String courseCode; 
-
-  AddNote(String courseCode)
-  {
+  AddNote(String courseCode, {note,edit=false} ) {
     this.courseCode = courseCode;
+    if(edit)
+    {
+      this.edit=edit;
+      this.note = note;
+    }
   }
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return AddNoteState(this.courseCode);
-  }   
+    return AddNoteState(this.courseCode,note:this.note,edit:this.edit);
+  }
+}
+
+class AddNoteState extends State<AddNote> {
+  final _model = NoteModel();
+
+  bool _isListening = false;
+  bool _speechRecognitionAvailable = false;
+  bool _edit = false;
+  SpeechRecognition _speech;
+  String courseCode;
+  String transcription = "";
+  Note _note;
+
+  AddNoteState(String courseCode, {note,edit}) {
+    this.courseCode = courseCode;
+    if(edit){
+    this._edit = edit;
+    this._note = note;
+    }
   }
 
-
-  class AddNoteState extends State<AddNote> 
-  { 
-
-    bool _isListening = false;
-    bool _speechRecognitionAvailable = false; 
-    SpeechRecognition _speech; 
-    String courseCode; 
-    String  transcription= ""; 
-  
-    AddNoteState(String courseCode)
-    {
-      this.courseCode = courseCode; 
-    }
-
-
-     @override
+  @override
   initState() {
-    activateSpeechRecognizer(); 
+    activateSpeechRecognizer();
     super.initState();
   }
-  
-    // TODO: implement build
-     @override
+
+  // TODO: implement build
+  @override
   Widget build(BuildContext context) {
     DateTime now = new DateTime.now();
     String date = new DateTime(now.year, now.month, now.day).toString();
-    String note_name,note_content; 
-    // TODO: implement build
-    return new Scaffold(
-      appBar: new AppBar(
-        title: Text(AppLocalizations.of(context).translate('add_note_string')),
-
-      ),
-      body: new Center(
-        child: Column(
-          children: <Widget>[
-            Padding(
-            padding: const EdgeInsets.all(4),
-            child: TextFormField(
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).translate('notename_string'), 
-              ),
-              onChanged: (text) 
-              {
-                note_name = text; 
-              },
-            )
-            ), 
-            Padding(
-              padding:  const EdgeInsets.all(4),
-              child: TextField(
-                
-                decoration: InputDecoration(hintText: AppLocalizations.of(context).translate('content_string')),
-                keyboardType: TextInputType.multiline,
-                onChanged: (text_2) 
-                {
-                 note_content = text_2; 
-                },
-                maxLines: 7,
-              ),
-              
-            
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                FloatingActionButton(
-                  heroTag:  'Add Button',
-                  child:  Icon(Icons.check),
-                  onPressed: () 
-                  {
-                    _save_note_to_db(new Note(noteName:note_name,courseCode: this.courseCode,   dateCreated: date,dateEdited: date,noteData: note_content)); 
-                    Navigator.pop(context);
-                  },
-                ),
-                FloatingActionButton(
-                  heroTag: ' Mic Button',
-                  child: Icon(Icons.mic),
-                  onPressed: () 
-                  {
-                    _isListening = ! _isListening; 
-                    if(_isListening  && _speechRecognitionAvailable)
-                    {
-                      _speech.listen(locale: 'en_US').then((text) =>  print(text));
-                    }
-                    start(); 
-                    showDialog(
-                      context: context, 
-                      builder: (BuildContext context)
-                      { 
-                        return new Dialog(
-                          child: Container(
-                            height: 150,
-                            width: 150,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                              IconButton(
-                                icon:  Icon(Icons.cancel),
-                                iconSize: 40,
-                                color: Colors.cyan,
-                                onPressed: () 
-                                {
-                                  if(_isListening) 
-                                  {
-                                    _speech.stop().then(
-                                      (result) => setState(() => _isListening = false) 
-                                    );
-                                  }
-                                  _isListening = !_isListening;
-                                  
-                                  Navigator.pop(context);
-                                },
-                                
-
-                              )
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    );
-                    
-                  },
-                )
-              ],
-            )
-
-          ],
-        ),
-      ),
-
-    );
-  
+    if(_note==null)
+    {
+      _note = new Note();
+      _note.courseCode = this.courseCode;
+      _note.dateEdited = date;
+      _note.dateCreated = date;
+    }
+    
+  Future<void> _save_note_to_db(Note note) async {
+  print('Inserting new note $note');
+  _model.insertNote(note);
 
   }
+    return new Scaffold(
+        appBar: new AppBar(
+          title:
+              Text(AppLocalizations.of(context).translate('add_note_string')),
+        ),
+        body: new SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: TextFormField(
+                      initialValue: _note.noteName,
+                      decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)
+                            .translate('notename_string'),
+                      ),
+                      onChanged: (text) {
+                        _note.noteName = text;
+                      },
+                    )),
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: TextFormField(
+                    initialValue: _note.noteData,
+                    decoration: InputDecoration(
+                        hintText: AppLocalizations.of(context)
+                            .translate('content_string')),
+                    keyboardType: TextInputType.multiline,
+                    onChanged: (text_2) {
+                      _note.noteData = text_2;
+                    },
+                    maxLines: 11,
+                  ),
+                ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child:Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    FloatingActionButton(
+                      heroTag: 'Add Button',
+                      child: Icon(Icons.check),
+                      onPressed: () {
+                        print("Creating new note with $_note");
+                        _save_note_to_db(_note);
+                        Navigator.pop(context);
+                      },
+                    ),
+                    FloatingActionButton(
+                      heroTag: ' Mic Button',
+                      child: Icon(Icons.mic),
+                      onPressed: () {
+                        _isListening = !_isListening;
+                        if (_isListening && _speechRecognitionAvailable) {
+                          _speech
+                              .listen(locale: 'en_US')
+                              .then((text) => print(text));
+                        }
+                        start();
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return new Dialog(
+                                child: Container(
+                                  height: 150,
+                                  width: 150,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.cancel),
+                                        iconSize: 40,
+                                        color: Colors.cyan,
+                                        onPressed: () {
+                                          if (_isListening) {
+                                            _speech.stop().then((result) =>
+                                                setState(() =>
+                                                    _isListening = false));
+                                          }
+                                          _isListening = !_isListening;
 
+                                          Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                    )
+                  ],
+                ))
+              ],
+            ),
+          ),
+        ));
+ 
+ 
+ 
+}
+
+ 
+ 
+ 
   
-
-
-
-  
-
 
   void start() => _speech
       .listen(locale: 'en_US')
@@ -187,8 +196,7 @@ class AddNote extends StatefulWidget{
 
   void onCurrentLocale(String locale) {
     print('_MyAppState.onCurrentLocale... $locale');
-    setState(
-        () =>  languages.firstWhere((l) => l.code == locale));
+    setState(() => languages.firstWhere((l) => l.code == locale));
   }
 
   void onRecognitionStarted() => setState(() => _isListening = true);
@@ -197,12 +205,12 @@ class AddNote extends StatefulWidget{
 
   void onRecognitionComplete() => setState(() => _isListening = false);
 
-    void setAvailabilityHandler(void onSpeechAvailability(bool result)) => _speech.setAvailabilityHandler(onSpeechAvailability);
-
+  void setAvailabilityHandler(void onSpeechAvailability(bool result)) =>
+      _speech.setAvailabilityHandler(onSpeechAvailability);
 
   //void errorHandler() => activateSpeechRecognizer();
 
-    void activateSpeechRecognizer() {
+  void activateSpeechRecognizer() {
     print('_MyAppState.activateSpeechRecognizer... ');
     _speech = new SpeechRecognition();
     setAvailabilityHandler(onSpeechAvailability);
@@ -214,29 +222,7 @@ class AddNote extends StatefulWidget{
         .activate()
         .then((res) => setState(() => _speechRecognitionAvailable = res));
   }
-    
-  }
-
-
-  Future<void> _save_note_to_db(Note note) async{
-    print('Inserting new note'); 
-    _model.insertNote(note);  
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return null;
-  }
-
-
-  
-
-
-
-
-
-
+}
 
 
 class Language {
@@ -246,12 +232,10 @@ class Language {
   const Language(this.name, this.code);
 }
 
-  const languages = const [
+const languages = const [
   const Language('Francais', 'fr_FR'),
   const Language('English', 'en_US'),
   const Language('Pусский', 'ru_RU'),
   const Language('Italiano', 'it_IT'),
   const Language('Español', 'es_ES'),
 ];
-
- 

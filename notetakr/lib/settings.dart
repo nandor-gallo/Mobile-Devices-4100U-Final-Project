@@ -8,8 +8,7 @@ import 'package:path/path.dart';
 import 'AddNote.dart';
 import 'MyNote.dart';
 
-final _model = NoteModel(); 
-
+final _model = NoteModel();
 
 class Settings extends StatefulWidget {
   Settings();
@@ -18,10 +17,7 @@ class Settings extends StatefulWidget {
 }
 
 class SettingsState extends State<Settings> {
-  
-  MyNotesPageState() {
-
-  }
+  MyNotesPageState() {}
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +26,11 @@ class SettingsState extends State<Settings> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title:  Text(AppLocalizations.of(context).translate('setting_string')),
-        
-      ),
-      body: Container(
-        child: Text("Addd settings here"),
-    ));
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context).translate('setting_string')),
+        ),
+        body: Container(
+          child: Text("Addd settings here"),
+        ));
   }
-
-
-
-
 }
-
-
-
-
-

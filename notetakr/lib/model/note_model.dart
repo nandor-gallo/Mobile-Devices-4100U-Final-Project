@@ -16,25 +16,25 @@ class NoteModel {
   Future<void> updateNote(Note note) async {
     var db = await DBUtils.init();
     db.update(
-      'notes', 
-      note.toMap(), 
+      'notes',
+      note.toMap(),
       where: 'id = ?',
       whereArgs: [note.id],
-    );   
+    );
   }
 
   Future<int> deleteNote(Note note) async {
     final db = await DBUtils.init();
     return await db.delete(
       'notes',
-      where: 'courseCode = ? ',
-      whereArgs: [note.courseCode],
+      where: 'id = ? ',
+      whereArgs: [note.id],
     );
   }
 
   Future<List<Note>> getAllNotes() async {
     var db = await DBUtils.init();
-    final List<Map<String,dynamic>> maps = await db.query('notes');
+    final List<Map<String, dynamic>> maps = await db.query('notes');
     List<Note> notes = [];
     for (int i = 0; i < maps.length; i++) {
       notes.add(Note.fromMap(maps[i]));
@@ -44,17 +44,15 @@ class NoteModel {
 
   Future<List<Note>> getAllNotesforCourse(String course) async {
     var db = await DBUtils.init();
-    final List<Map<String,dynamic>> maps = await db.query('notes');
+    final List<Map<String, dynamic>> maps = await db.query('notes');
     List<Note> notes = [];
     for (int i = 0; i < maps.length; i++) {
       Note my_note = Note.fromMap(maps[i]);
-      if(my_note.courseCode!= course)
-      {
-        continue; 
+      if (my_note.courseCode != course) {
+        continue;
       }
       notes.add(my_note);
     }
     return notes;
   }
-
 }

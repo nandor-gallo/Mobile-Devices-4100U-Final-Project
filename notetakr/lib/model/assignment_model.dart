@@ -22,7 +22,6 @@ class AssignmentModel {
     }
   }
 
-
   // Local Functions for assignment storage
   Future<void> insertAssignment(Assignment assignment) async {
     var db = await DBUtils.init();
@@ -36,16 +35,16 @@ class AssignmentModel {
   Future<void> updateAssignment(Assignment assignment) async {
     var db = await DBUtils.init();
     db.update(
-      'courses', 
-      assignment.toMap(), 
+      'courses',
+      assignment.toMap(),
       where: 'id = ?',
       whereArgs: [assignment.id],
-    );   
+    );
   }
 
   Future<List<Assignment>> getAllAssignments() async {
     var db = await DBUtils.init();
-    final List<Map<String,dynamic>> maps = await db.query('assignments');
+    final List<Map<String, dynamic>> maps = await db.query('assignments');
     List<Assignment> assignments = [];
     for (int i = 0; i < maps.length; i++) {
       assignments.add(Assignment.fromMap(maps[i]));

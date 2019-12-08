@@ -35,7 +35,7 @@ class _LectureListState extends State<LectureList>
     'CSCI 3100',
     'CSCI 4100',
     'CSCI 4500',
-    ' Intro to Computer Science'
+    'Intro to Computer Science'
   ];
 
   final _lec_model = CourseModel();

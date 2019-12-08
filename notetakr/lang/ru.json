@@ -1,0 +1,32 @@
+{
+    "assignments_string": "Назначения",
+    "notes_string": "Заметки",
+    "add_class_string" : "Добавить новый класс",
+    "class_string" : "Имя класса",
+    "course_string" : "Код курса",
+    "coursedays_string" : "Дни курса",
+    "coursetime_string" : "Время курса",
+    "add_string" : "Добавлять",
+    "cancel_string" : "Отмена",
+    "assign_name_string" : "Имя Назначения",
+    "assign_title_string" : "Название назначения",
+    "duedate_string" : "Срок оплаты",
+    "addassignment_string" : "Добавить назначение",
+    "timedue_string" : "Срок исполнения",
+    "campusmap_string" : "Карта кампуса",
+    "offerd_courses_string" : "Предлагаемые курсы",
+    "todayspoll_string" : "Сегодняшний опрос",
+    "setting_string" : "настройки",
+    "maplegend_string" : "Легенда карты",
+    "yourlocation_string" : "Ваше текущее местоположение:",
+    "currentaddr_string" : "Текущий адрес:",
+    "ontariotech_string" : "Онтарио Технические курсы U",
+    "faveprof_string" : "Какой профессор был твоим любимым?",
+    "add_note_string" : "Добавить страницу заметки",
+    "notename_string" : "Название заметки",
+    "content_string" : "содержание",
+    "new_class_added_dialog" : "Добавлен новый класс!",
+    "new_assignment_added_dialog" : "Новое задание добавлено"
+
+    
+}

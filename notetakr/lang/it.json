@@ -1,0 +1,33 @@
+{
+    "assignments_string": "assegnazioni",
+    "notes_string": "Gli appunti",
+    "add_class_string" : "Aggiungi una nuova classe",
+    "class_string" : "Nome della classe",
+    "course_string" : "Codice del corso",
+    "coursedays_string" : "Giorni del corso",
+    "coursetime_string" : "Tempo del corso",
+    "add_string" : "Inserisci",
+    "cancel_string" : "Annulla",
+    "assign_name_string" : "Nome assegnazione",
+    "assign_title_string" : "Titolo dell'incarico",
+    "duedate_string" : "Scadenza",
+    "addassignment_string" : "Aggiungi un compito",
+    "timedue_string" : "Tempo dovuto",
+    "campusmap_string" : "Mappa del campus",
+    "offerd_courses_string" : "Corsi offerti",
+    "todayspoll_string" : "Sondaggio di oggi",
+    "setting_string" : "Impostazioni",
+    "maplegend_string" : "Legenda della mappa",
+    "yourlocation_string" : "La tua posizione attuale:",
+    "currentaddr_string" : "Indirizzo corrente:",
+    "ontariotech_string" : "Corsi Ontario Tech U",
+    "faveprof_string" : "Quale professore era il tuo preferito?",
+    "add_note_string" : "Aggiungi pagina nota",
+    "notename_string" : "Nome della not",
+    "content_string" : "Soddisfare",
+    "new_class_added_dialog" : "Nuova classe aggiunta!",
+    "new_assignment_added_dialog" : "Nuovo incarico aggiunto!"
+
+
+    
+}

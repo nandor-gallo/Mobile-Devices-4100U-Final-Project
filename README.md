@@ -19,7 +19,7 @@ With flutter installed and an android device connected, run `flutter run` in the
 - **Maps** (Campus Map screen - map.dart)
 - **Geolocation** (Gets current lat/long using geolocator - map.dart)
 - **Geocoding** (Gets current address from current lat/long - map.dart)
-- **i18n** (App has french version from lang/fr.json - app_localizations.dart)
+- **i18n** (App has french, russian, italian, and spanish versions from lang/*.json - app_localizations.dart)
  
 ## Other features
 - http request (Offered courses pulls from ontario tech available courses json)

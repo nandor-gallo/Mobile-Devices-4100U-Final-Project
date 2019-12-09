@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:notetakr/themes.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'LecturePage.dart';
 import 'app_localizations.dart';
 
-void main() => runApp(new NoteTakRApp());
+void main() => runApp(
+
+ChangeNotifierProvider<ThemeNotifier>(
+
+builder: (_)=> ThemeNotifier(lightTheme),
+child:NoteTakRApp(),
+),);
 
 class NoteTakRApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return new RefreshConfiguration(
         headerBuilder: () =>
             WaterDropHeader(), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
@@ -33,9 +43,7 @@ class NoteTakRApp extends StatelessWidget {
             false, // Disable pull-up to load more functionality when Viewport is less than one screen
         enableBallisticLoad: true,
         child: MaterialApp(
-          theme: ThemeData(
-            primarySwatch: Colors.lightBlue,
-          ),
+          theme: themeNotifier.getTheme(),
           title: 'NoteTakR',
           // SplashScreen while app is loading
           home: SplashScreen.navigate(

@@ -198,6 +198,7 @@ class MainView extends StatelessWidget {
                     'in item builder len of data: ${snapshot.data.length}, index: $index');
                 print('in item builder: ${snapshot.data[index]}');
                 return new Slidable(
+                  key: Key("Main Sliable"),
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   child: NWS(context, my_list[index]),

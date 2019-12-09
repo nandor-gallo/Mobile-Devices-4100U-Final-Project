@@ -62,10 +62,8 @@ class ProgramWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return new GestureDetector(
       onLongPress: () {
-        //Create a dialog
 
         showDialog(
             context: context,

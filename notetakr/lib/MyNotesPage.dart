@@ -120,7 +120,6 @@ class NWS extends StatefulWidget {
   }
 
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return NoteWidget(context, note);
   }
 }

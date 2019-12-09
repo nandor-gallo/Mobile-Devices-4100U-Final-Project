@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:notetakr/MicroPhonePage.dart';
 import 'package:notetakr/model/note_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_recognition/speech_recognition.dart';
 import 'app_localizations.dart';
 import 'model/note.dart';
@@ -11,6 +13,8 @@ class AddNote extends StatefulWidget {
   String courseCode;
   bool edit = false;
   Note note;
+
+  
 
   AddNote(String courseCode, {note,edit=false} ) {
     this.courseCode = courseCode;
@@ -30,7 +34,7 @@ class AddNote extends StatefulWidget {
 
 class AddNoteState extends State<AddNote> {
   final _model = NoteModel();
-
+  TextEditingController _c ;
   bool _isListening = false;
   bool _speechRecognitionAvailable = false;
   bool _edit = false;
@@ -38,7 +42,18 @@ class AddNoteState extends State<AddNote> {
   String courseCode;
   String transcription = "";
   Note _note;
+  Map<PermissionGroup, PermissionStatus> permissions;
 
+  void getPermission() async
+  {
+
+    print("Requesting permissions");
+    permissions = await PermissionHandler().requestPermissions([
+      PermissionGroup.microphone,
+      PermissionGroup.speech, 
+    ]);
+  }
+  
   AddNoteState(String courseCode, {note,edit}) {
     this.courseCode = courseCode;
     if(edit){
@@ -49,7 +64,8 @@ class AddNoteState extends State<AddNote> {
 
   @override
   initState() {
-    activateSpeechRecognizer();
+    getPermission(); 
+    _c = new TextEditingController();
     super.initState();
   }
 
@@ -95,7 +111,7 @@ class AddNoteState extends State<AddNote> {
                 Padding(
                   padding: const EdgeInsets.all(4),
                   child: TextFormField(
-                    initialValue: _note.noteData,
+                    initialValue: (_note.noteData==null) ? transcription : (_note.noteData+transcription),
                     decoration: InputDecoration(
                         hintText: AppLocalizations.of(context)
                             .translate('content_string')),
@@ -103,7 +119,7 @@ class AddNoteState extends State<AddNote> {
                     onChanged: (text_2) {
                       _note.noteData = text_2;
                     },
-                    maxLines: 11,
+                    maxLines: 20,
                   ),
                 ),
               Align(
@@ -128,40 +144,17 @@ class AddNoteState extends State<AddNote> {
                         if (_isListening && _speechRecognitionAvailable) {
                           _speech
                               .listen(locale: 'en_US')
-                              .then((text) => print(text));
+                              .then((text) => 
+                              {
+                              print("After finishing:$text"),
+                              //transcription=text,
+                              });
                         }
-                        start();
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return new Dialog(
-                                child: Container(
-                                  height: 150,
-                                  width: 150,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.cancel),
-                                        iconSize: 40,
-                                        color: Colors.cyan,
-                                        onPressed: () {
-                                          if (_isListening) {
-                                            _speech.stop().then((result) =>
-                                                setState(() =>
-                                                    _isListening = false));
-                                          }
-                                          _isListening = !_isListening;
+                        //start();
+                         Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => microphone(_note)));
 
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
+                     
                       },
                     )
                   ],
@@ -179,63 +172,4 @@ class AddNoteState extends State<AddNote> {
  
  
   
-
-  void start() => _speech
-      .listen(locale: 'en_US')
-      .then((result) => print('_MyAppState.start => result $result'));
-
-  void cancel() =>
-      _speech.cancel().then((result) => setState(() => _isListening = result));
-
-  void stop() => _speech.stop().then((result) {
-        setState(() => _isListening = result);
-      });
-
-  void onSpeechAvailability(bool result) =>
-      setState(() => _speechRecognitionAvailable = result);
-
-  void onCurrentLocale(String locale) {
-    print('_MyAppState.onCurrentLocale... $locale');
-    setState(() => languages.firstWhere((l) => l.code == locale));
-  }
-
-  void onRecognitionStarted() => setState(() => _isListening = true);
-
-  void onRecognitionResult(String text) => setState(() => transcription = text);
-
-  void onRecognitionComplete() => setState(() => _isListening = false);
-
-  void setAvailabilityHandler(void onSpeechAvailability(bool result)) =>
-      _speech.setAvailabilityHandler(onSpeechAvailability);
-
-  //void errorHandler() => activateSpeechRecognizer();
-
-  void activateSpeechRecognizer() {
-    print('_MyAppState.activateSpeechRecognizer... ');
-    _speech = new SpeechRecognition();
-    setAvailabilityHandler(onSpeechAvailability);
-    _speech.setCurrentLocaleHandler(onCurrentLocale);
-    _speech.setRecognitionStartedHandler(onRecognitionStarted);
-    _speech.setRecognitionResultHandler(onRecognitionResult);
-    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
-    _speech
-        .activate()
-        .then((res) => setState(() => _speechRecognitionAvailable = res));
-  }
 }
-
-
-class Language {
-  final String name;
-  final String code;
-
-  const Language(this.name, this.code);
-}
-
-const languages = const [
-  const Language('Francais', 'fr_FR'),
-  const Language('English', 'en_US'),
-  const Language('Pусский', 'ru_RU'),
-  const Language('Italiano', 'it_IT'),
-  const Language('Español', 'es_ES'),
-];

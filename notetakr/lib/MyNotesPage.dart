@@ -204,7 +204,7 @@ class MainView extends StatelessWidget {
                    secondaryActions: <Widget>[
         IconSlideAction(
             caption: 'Edit',
-            color: Colors.black45,
+            color: Colors.blue,
             icon: Icons.edit,
             onTap: () {
               print("Edit Pressed");
@@ -217,7 +217,8 @@ class MainView extends StatelessWidget {
             onTap: () {
               print('Delete');
               setState(){
-              _model.deleteNote(my_list[index]);
+              deleteNote(my_list[index]);
+              my_list.removeAt(index);
 
               }
             }),
@@ -230,5 +231,11 @@ class MainView extends StatelessWidget {
            return  Center(child:Text('No Notes have been added for this course'));
           }
         });
+  }
+
+
+  void deleteNote(Note n) async
+  {
+    _model.deleteNote(n);
   }
 }

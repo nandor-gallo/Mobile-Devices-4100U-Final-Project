@@ -84,7 +84,6 @@ class MyNotesPageState extends State<MyNotesPage> {
               child: MainView(this.title))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //TODO: Make add Notes functionality
           print("Include Add Notes Functionality");
           _navigatetoAddNotes(context, title);
           Scaffold.of(this.context).showSnackBar(addSnackbar);
@@ -100,9 +99,15 @@ void _navigatetoAddNotes(BuildContext context, String course_code) {
       context, MaterialPageRoute(builder: (context) => AddNote(course_code)));
 }
 
-void _navigatetoEditNotes(BuildContext context, String course_code,Note note) {
+void _navigatetoEditNotes(BuildContext context, String course_code, Note note) {
   Navigator.push(
-      context, MaterialPageRoute(builder: (context) => AddNote(course_code,note: note,edit: true,)));
+      context,
+      MaterialPageRoute(
+          builder: (context) => AddNote(
+                course_code,
+                note: note,
+                edit: true,
+              )));
 }
 
 void _navigatetodescription(BuildContext context, Note s) {
@@ -136,33 +141,32 @@ class NoteWidget extends State<NWS> {
   @override
   Widget build(BuildContext context) {
     print('Inside NoteWidget, ${note}');
-    return  Card(
-        child: InkWell(
-          splashColor: Colors.cyan,
-          onTap: () {
-            _navigatetodescription(context, note);
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
+    return Card(
+      child: InkWell(
+        splashColor: Colors.cyan,
+        onTap: () {
+          _navigatetodescription(context, note);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                note.noteName,
+                style: TextStyle(color: Colors.black, fontSize: 30),
+              ),
+            ),
+            Padding(
                 padding: const EdgeInsets.all(4),
                 child: Text(
-                  note.noteName,
-                  style: TextStyle(color: Colors.black, fontSize: 30),
-                ),
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(
-                    note.dateCreated,
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  )),
-            ],
-          ),
+                  note.dateCreated,
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                )),
+          ],
         ),
-      );
-
+      ),
+    );
   }
 }
 
@@ -189,9 +193,7 @@ class MainView extends StatelessWidget {
           if (snapshot.hasData) {
             List<Note> my_list = snapshot.data;
 
-            return 
-            
-            ListView.builder(
+            return ListView.builder(
               itemCount: my_list.length,
               itemBuilder: (_, int index) {
                 print(
@@ -202,41 +204,39 @@ class MainView extends StatelessWidget {
                   actionPane: SlidableDrawerActionPane(),
                   actionExtentRatio: 0.25,
                   child: NWS(context, my_list[index]),
-                   secondaryActions: <Widget>[
-        IconSlideAction(
-            caption: 'Edit',
-            color: Colors.blue,
-            icon: Icons.edit,
-            onTap: () {
-              print("Edit Pressed");
-              _navigatetoEditNotes(context,my_list[index].courseCode,my_list[index]);
-            }),
-        IconSlideAction(
-            caption: 'Delete',
-            color: Colors.red,
-            icon: Icons.delete,
-            onTap: () {
-              print('Delete');
-              setState(){
-              deleteNote(my_list[index]);
-              my_list.removeAt(index);
-
-              }
-            }),
-      ],
-               
+                  secondaryActions: <Widget>[
+                    IconSlideAction(
+                        caption: 'Edit',
+                        color: Colors.blue,
+                        icon: Icons.edit,
+                        onTap: () {
+                          print("Edit Pressed");
+                          _navigatetoEditNotes(context,
+                              my_list[index].courseCode, my_list[index]);
+                        }),
+                    IconSlideAction(
+                        caption: 'Delete',
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () {
+                          print('Delete');
+                          setState() {
+                            deleteNote(my_list[index]);
+                            my_list.removeAt(index);
+                          }
+                        }),
+                  ],
                 );
               },
             );
           } else {
-           return  Center(child:Text('No Notes have been added for this course'));
+            return Center(
+                child: Text('No Notes have been added for this course'));
           }
         });
   }
 
-
-  void deleteNote(Note n) async
-  {
+  void deleteNote(Note n) async {
     _model.deleteNote(n);
   }
 }

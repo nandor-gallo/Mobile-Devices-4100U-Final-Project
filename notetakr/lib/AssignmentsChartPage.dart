@@ -8,7 +8,6 @@ import 'app_localizations.dart';
 class AssignmentChartsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return AssignmentChartState();
   }
 }
@@ -34,13 +33,11 @@ class AssignmentChartState extends State<AssignmentChartsPage> {
 
   @override
   void setState(fn) {
-    // TODO: implement setState
     super.setState(fn);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return FutureBuilder(
         future: _getAllAssignments(),
         builder: (context, snapshot) {

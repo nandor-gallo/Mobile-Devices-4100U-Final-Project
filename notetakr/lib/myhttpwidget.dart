@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:notetakr/model/class_model.dart';
+import 'package:notetakr/model/course_model.dart';
 import 'package:notetakr/model/course.dart';
-import 'package:notetakr/model/note_model.dart';
 import 'app_localizations.dart';
-import 'model/note.dart';
 import 'model/program.dart';
 
 class myhttpWidget extends StatefulWidget {

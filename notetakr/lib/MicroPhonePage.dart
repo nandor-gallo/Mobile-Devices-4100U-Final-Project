@@ -51,10 +51,7 @@ class _microphoneState extends State<microphone> {
       PermissionGroup.speech, 
     ]);
   }
-
-
-
-
+  
   _microphoneState(Note note)
   {
     this._note=note; 

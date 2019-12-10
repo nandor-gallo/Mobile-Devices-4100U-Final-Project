@@ -92,7 +92,6 @@ class AssignmentChartState extends State<AssignmentChartsPage> {
 
   Future<List<Assignment>> _getAllAssignments() async {
     List<Assignment> my_list = await _model.getAllAssignments();
-    my_list.forEach((item) => print('inside for each $item'));
     return my_list;
   }
 }

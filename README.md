@@ -1,5 +1,13 @@
 # Mobile-Devices CSCI4100U Final-Project (NoteTakR)
 
+## NoteTakR 
+
+Note Taking app designed to be minilmalist to quickly take notes and save them in a local sqflite database. 
+
+!(sample video)(resources/example.gif) 
+
+
+
 ## How to run
 With flutter installed and an android device connected, run `flutter run` in the notetakr folder.
 
@@ -23,3 +31,8 @@ With flutter installed and an android device connected, run `flutter run` in the
  
 ## Other features
 - http request (Offered courses pulls from ontario tech available courses json)
+- flutter speech to text (Transcribe Notes)
+- flutter slidable (Slidable menu)
+- pull to refresh (unique loading menus)
+- flare splash screen (loading animation)
+

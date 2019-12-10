@@ -115,7 +115,7 @@ class _microphoneState extends State<microphone> {
                       child: new Container(
                           padding: const EdgeInsets.all(8.0),
                           color: Colors.grey.shade200,
-                          child: new Text(transcription))),
+                          child: new Text(transcription,style: TextStyle(color: Colors.black),))),
                   
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

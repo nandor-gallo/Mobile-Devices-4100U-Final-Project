@@ -4,7 +4,7 @@
 
 Note Taking app designed to be minilmalist to quickly take notes and save them in a local sqflite database. 
 
-!(sample video)(resources/example.gif) 
+<img src="resources/example.gif" height="300">
 
 
 

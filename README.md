@@ -36,3 +36,12 @@ With flutter installed and an android device connected, run `flutter run` in the
 - pull to refresh (unique loading menus)
 - flare splash screen (loading animation)
 
+
+## FAQs 
+
+- Why won't recording notes work? 
+        
+        1. Make sure the app has permission for microphone 
+
+        2. The flutter package does not work with the emulator so you may need to use a physical device to test the microphone. The gif shows a test run on a one plus 5 device. 
+    

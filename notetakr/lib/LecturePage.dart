@@ -105,7 +105,7 @@ class _LectureListState extends State<LectureList>
                               crossAxisCount: 4,
                               children: (my_list
                                   .map((lecture) =>
-                                      new LectureWidget(this.context, lecture))
+                                      new LW(this.context, lecture))
                                   .toList()));
                         } else {
                           return new Center(child: Text("Please Add Courses"));
@@ -599,7 +599,28 @@ class _LectureListState extends State<LectureList>
 //     _model.deleteGrade(selectedItem);
 //   }
 
-class LectureWidget extends StatelessWidget {
+class LW extends StatefulWidget
+{
+
+  Course title;
+  BuildContext context;
+  final _model = CourseModel();
+
+  LW(context, Course title) {
+    this.context = context;
+    this.title = title;
+  }
+  
+  @override
+  State<StatefulWidget> createState() {
+    return LectureWidget(this.context,this.title);
+  }
+  
+}
+
+
+
+class LectureWidget extends State<LW> {
   Course title;
   BuildContext context;
   final _model = CourseModel();
@@ -627,8 +648,10 @@ class LectureWidget extends StatelessWidget {
                     new FlatButton(
                       child: Text('Delete'),
                       onPressed: () {
-                        _model.deleteCourse(this.title);
-                        setState() {}
+                       
+                        setState(() {
+                           _model.deleteCourse(this.title);
+                        });
                         Navigator.pop(context);
                       },
                     )

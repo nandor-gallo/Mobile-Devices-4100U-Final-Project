@@ -5,6 +5,15 @@ import 'package:notetakr/model/assignment.dart';
 import 'package:notetakr/model/assignment_model.dart';
 import 'app_localizations.dart';
 
+
+/*
+Page to display graphs from the assignments 
+Uses a dataframe to display all the assignments. 
+Dependencies: 
+Assignment class from package Model 
+Assignment_Model class from package Model 
+*/ 
+
 class AssignmentChartsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {

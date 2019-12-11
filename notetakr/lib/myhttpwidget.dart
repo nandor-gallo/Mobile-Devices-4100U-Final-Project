@@ -5,6 +5,16 @@ import 'package:notetakr/model/course.dart';
 import 'app_localizations.dart';
 import 'model/program.dart';
 
+/* 
+Class to gernerate Widget for OnTechU offered courses
+Contains methods to download courses from http request. 
+Depends on program from package model. 
+*/
+
+
+
+
+
 class myhttpWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {

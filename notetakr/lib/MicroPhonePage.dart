@@ -6,6 +6,15 @@ import 'package:speech_recognition/speech_recognition.dart';
 import 'AddNote.dart';
 import 'model/note.dart';
 
+/*
+Page to record Text during Note taking saves the text and passes them back to the Edit Note Page
+*/ 
+
+
+
+
+
+
 const languages = const [
   const Language('Francais', 'fr_FR'),
   const Language('English', 'en_US'),

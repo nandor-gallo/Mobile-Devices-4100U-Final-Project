@@ -14,6 +14,14 @@ import 'myhttpwidget.dart';
 import 'utils/Notifications.dart';
 import 'model/assignment_model.dart';
 
+
+/*
+Main Widget to displayed on APP startup 
+
+*/ 
+
+
+
 String selectedAssigmentID = "0";
 
 class LectureList extends StatefulWidget {

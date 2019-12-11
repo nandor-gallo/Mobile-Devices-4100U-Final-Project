@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 
 import 'model/note.dart';
 
+/*Simple Page to show a note*/ 
+
+
+
+
 class MyNote extends StatelessWidget {
   Note note;
 
@@ -25,7 +30,7 @@ class MyNote extends StatelessWidget {
                 padding: const EdgeInsets.all(7),
                 child: new Text(
                   note.noteData,
-                  style: TextStyle(color: Colors.black, fontSize: 15),
+                  style: TextStyle( fontSize: 15),
                 ),
               ),
             ),

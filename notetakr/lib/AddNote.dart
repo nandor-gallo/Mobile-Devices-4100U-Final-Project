@@ -7,6 +7,12 @@ import 'package:speech_recognition/speech_recognition.dart';
 import 'app_localizations.dart';
 import 'model/note.dart';
 
+/* 
+Page to edit and add a new note 
+*/ 
+
+
+
 class AddNote extends StatefulWidget {
   String courseCode;
   bool edit = false;

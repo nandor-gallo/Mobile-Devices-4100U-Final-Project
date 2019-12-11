@@ -53,35 +53,7 @@ class MyNotesPageState extends State<MyNotesPage> {
         title: Text(this.title),
         actions: <Widget>[],
       ),
-      body: Scrollbar(
-          child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: WaterDropMaterialHeader(),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = Text("pull up load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = CircularProgressIndicator();
-                  } else if (mode == LoadStatus.failed) {
-                    body = Text("Load Failed!Click retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = Text("release to load more");
-                  } else {
-                    body = Text("No more Data");
-                  }
-                  return Container(
-                    height: 55.0,
-                    child: Center(child: body),
-                  );
-                },
-              ),
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: MainView(this.title))),
+      body: MainView(this.title),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print("Include Add Notes Functionality");
@@ -154,7 +126,7 @@ class NoteWidget extends State<NWS> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 note.noteName,
-                style: TextStyle(color: Colors.black, fontSize: 30),
+                style: TextStyle( fontSize: 30),
               ),
             ),
             Padding(
@@ -176,17 +148,35 @@ Future<List<Note>> _getAllNotes(String coursecode) async {
   return my_notes;
 }
 
-class MainView extends StatelessWidget {
+class MainView extends StatefulWidget
+{
+  String title;
+    
+   MainView(String title) {
+    print(title);
+    this.title = title;
+  }
+  
+  
+  @override
+  State<StatefulWidget> createState() {
+    return MainViewState(this.title);
+  }
+  
+}
+
+
+
+class MainViewState extends State<MainView> {
   String title;
 
-  MainView(String title) {
+  MainViewState(String title) {
     print(title);
     this.title = title;
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return FutureBuilder(
         future: _getAllNotes(this.title),
         builder: (context, snapshot) {
@@ -220,12 +210,14 @@ class MainView extends StatelessWidget {
                         icon: Icons.delete,
                         onTap: () {
                           print('Delete');
-                          setState() {
+                          setState(() {
                             deleteNote(my_list[index]);
                             my_list.removeAt(index);
-                          }
+                          });
                         }),
                   ],
+                
+
                 );
               },
             );

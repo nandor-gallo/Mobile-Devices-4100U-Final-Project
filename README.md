@@ -39,9 +39,12 @@ With flutter installed and an android device connected, run `flutter run` in the
 
 ## FAQs 
 
-- Why won't recording notes work? 
+- Why won't recording notes with a microphone work? 
         
         1. Make sure the app has permission for microphone 
 
-        2. The flutter package does not work with the emulator so you may need to use a physical device to test the microphone. The gif shows a test run on a one plus 5 device. 
-    
+        2. The flutter package does not work with android emulators so you may need to use a physical device to test the microphone. The gif above shows a test run on a one plus 5 device. 
+
+- How do I edit/delete notes? 
+        
+        1. Slide the note to the left to reveal editing and deleting.
